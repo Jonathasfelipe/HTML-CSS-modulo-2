@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exemplos Interativos de Código e Círculo Cromático</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color:#FFA500 ;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .exemplo {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    button {
+      background-color: #fff;
+      color: #333;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #008000;
+    }
+
+    .link-transferencia {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #fff;
+      color: #333;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .link-transferencia:hover {
+      background-color: #ddd;
+    }
+
+    /* Cores do círculo cromático */
+    .cor {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .caixa {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid #ccc;
+    }
+
+    .cromatico {
+      margin-top: 50px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .cromatico h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .descricao-cor {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nome-cor {
+      font-weight: bold;
+    }
+
+    .codigo-cor {
+      font-size: 0.9em;
+      color: #ddd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Exemplos de Código Interativos</h1>
+
+  <div id="caixaCodigo" class="exemplo">
+    <!-- O código será exibido aqui -->
+  </div>
+
+  <button onclick="mostrarProximoCodigo()">Próximo Exemplo</button>
+  <button onclick="trocarFonte()">Trocar Fonte</button>
+
+  <script>
+    const codigos = [
+      '<h1 style="color:green;">Título Azul</h1>',
+      '<p style="font-size:20px;">Parágrafo grande</p>',
+      '<div style="width:100px; height:100px; background:red;"></div>',
+      'body { font-family: Arial; background: #f0f0f0; }',
+      '.botao { padding: 10px; background: #333; color: #fff; }'
+    ];
+
+    const fontes = [
+      'monospace',
+      '"Courier New", monospace',
+      '"Lucida Console", monospace',
+      '"Comic Sans MS", cursive',
+      '"Times New Roman", serif'
+    ];
+
+    let indiceCodigo = 0;
+    let indiceFonte = 0;
+
+    const caixaCodigo = document.getElementById('caixaCodigo');
+
+    function mostrarProximoCodigo() {
+      caixaCodigo.textContent = codigos[indiceCodigo];
+      indiceCodigo = (indiceCodigo + 1) % codigos.length;
+    }
+
+    function trocarFonte() {
+      caixaCodigo.style.fontFamily = fontes[indiceFonte];
+      indiceFonte = (indiceFonte + 1) % fontes.length;
+    }
+
+    // Mostra o primeiro código ao carregar
+    mostrarProximoCodigo();
+  </script>
+
+  <a class="link-transferencia" href="indexTipografiaPag2.html">➡️ Ir para a Página 2</a>
+  <a class="link-transferencia" href="indexTipografiaPag1.html">⬅️ Voltar para a Página 1</a>
+
+  <div class="cromatico">
+    <h2>Círculo Cromático</h2>
+
+    <div class="cor">
+      <div class="caixa" style="background: red;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Vermelho</span>
+        <span class="codigo-cor">#FF0000</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: orange;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Laranja</span>
+        <span class="codigo-cor">#FFA500</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: yellow;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Amarelo</span>
+        <span class="codigo-cor">#FFFF00</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: chartreuse;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Amarelo-esverdeado</span>
+        <span class="codigo-cor">#7FFF00</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: green;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Verde</span>
+        <span class="codigo-cor">#008000</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: springgreen;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Verde-azulado</span>
+        <span class="codigo-cor">#00FF7F</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: cyan;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Ciano</span>
+        <span class="codigo-cor">#00FFFF</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: dodgerblue;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Azul</span>
+        <span class="codigo-cor">#1E90FF</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: blueviolet;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Azul-arroxeado</span>
+        <span class="codigo-cor">#8A2BE2</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: violet;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Violeta</span>
+        <span class="codigo-cor">#EE82EE</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: magenta;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Magenta</span>
+        <span class="codigo-cor">#FF00FF</span>
+      </div>
+    </div>
+
+    <div class="cor">
+      <div class="caixa" style="background: deeppink;"></div>
+      <div class="descricao-cor">
+        <span class="nome-cor">Rosa</span>
+        <span class="codigo-cor">#FF1493</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
