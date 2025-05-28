@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estudo de Fontes e Responsividade</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background: linear-gradient(to bottom, #ffffff, #cccccc);
+      color: #000;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .caixa {
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 2px solid #333;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-decoration: underline;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    pre {
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .exemplo-fonte {
+      border: 1px dashed #333;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+
+    .link-transferencia {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #333;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .link-transferencia:hover {
+      background-color: #555;
+    }
+
+    #dialogoExemplos {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .conteudo-dialogo {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 300px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="caixa">
+    <h2>1. Introdução</h2>
+    <p>Este conteúdo se ajusta ao tamanho da tela, graças ao uso correto de unidades relativas e da viewport.</p>
+  </div>
+
+  <div class="caixa">
+    <h2>2. Exemplo Visual: Tamanhos de Fonte</h2>
+    <div class="exemplo-fonte" style="font-size: 0.8em;">Tamanho 0.8em</div>
+    <div class="exemplo-fonte" style="font-size: 1em;">Tamanho 1em (padrão)</div>
+    <div class="exemplo-fonte" style="font-size: 1.5em;">Tamanho 1.5em</div>
+    <div class="exemplo-fonte" style="font-size: 2em;">Tamanho 2em</div>
+    <div class="exemplo-fonte" style="font-size: 3em;">Tamanho 3em</div>
+  </div>
+
+  <div class="caixa">
+    <h2>3. Exemplo Visual: Larguras Configuráveis</h2>
+    <div class="exemplo-fonte" style="width: 50%; background: #e0e0e0;">Largura: 50%</div>
+    <div class="exemplo-fonte" style="width: 75%; background: #d0d0d0;">Largura: 75%</div>
+    <div class="exemplo-fonte" style="width: 100%; background: #c0c0c0;">Largura: 100%</div>
+  </div>
+
+  <div class="caixa">
+    <h2>4. Código HTML Exemplo</h2>
+    <pre>
+&lt;div style="font-size: 2em;"&gt;Texto maior&lt;/div&gt;
+&lt;div style="width: 50%;"&gt;Metade da largura&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="caixa">
+    <h2>5. Alteração de Fontes (Interativo)</h2>
+    <p id="demo-text" class="exemplo-fonte">Texto com fonte padrão.</p>
+    <button id="alterarFonte">Alterar Fonte</button>
+  </div>
+
+  <div class="caixa">
+    <h2>6. Abrir Diálogo de Exemplos</h2>
+    <button id="abrirDialogo">Abrir Diálogo</button>
+  </div>
+
+  <div id="dialogoExemplos">
+    <div class="conteudo-dialogo">
+      <p>Este é um exemplo de diálogo!</p>
+      <button id="fecharDialogo">Fechar</button>
+    </div>
+  </div>
+
+  <a class="link-transferencia" href="index2.html">➡️ Ir para a próxima página</a>
+  <a class="link-transferencia" href="index3.html">➡️ Ir para a Página 3</a>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const abrirDialogo = document.getElementById('abrirDialogo');
+      const fecharDialogo = document.getElementById('fecharDialogo');
+      const dialogo = document.getElementById('dialogoExemplos');
+
+      abrirDialogo.addEventListener('click', function() {
+        dialogo.style.display = 'flex';
+      });
+
+      fecharDialogo.addEventListener('click', function() {
+        dialogo.style.display = 'none';
+      });
+
+      window.addEventListener('click', function(e) {
+        if (e.target == dialogo) {
+          dialogo.style.display = 'none';
+        }
+      });
+
+      const fontes = [
+        'Arial, sans-serif',
+        '"Courier New", monospace',
+        '"Georgia", serif',
+        '"Verdana", sans-serif',
+        '"Times New Roman", serif',
+        '"Trebuchet MS", sans-serif',
+        '"Comic Sans MS", cursive',
+        '"Lucida Console", monospace',
+        '"Impact", sans-serif',
+        '"Tahoma", sans-serif'
+      ];
+
+      let indiceFonte = 0;
+
+      document.getElementById('alterarFonte').addEventListener('click', function() {
+        const texto = document.getElementById('demo-text');
+        texto.style.fontFamily = fontes[indiceFonte];
+        indiceFonte = (indiceFonte + 1) % fontes.length;
+      });
+    });
+  </script>
+
+</body>
+</html>
