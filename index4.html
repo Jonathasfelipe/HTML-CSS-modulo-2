@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Quebra-Cabeça de Cores - Estilo Cubo Mágico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #ff6ec4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      transition: background 0.5s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+      }
+      .cell {
+        border: 1px solid #fff;
+      }
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .controls {
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 5px;
+    }
+
+    .cell {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .cell:hover {
+      transform: scale(1.1);
+    }
+
+    .info {
+      margin-top: 10px;
+      font-size: 1em;
+      text-align: center;
+    }
+
+    button, select, .nav-link {
+      padding: 8px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #333;
+      color: #fff;
+      transition: background 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button:hover, select:hover, .nav-link:hover {
+      background: #555;
+    }
+
+    #ranking {
+      margin-top: 10px;
+      font-size: 0.9em;
+      max-height: 150px;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .digital {
+      font-family: 'Orbitron', 'VT323', monospace;
+      font-size: 1.5em;
+      margin: 5px 0;
+    }
+
+    .nav-links {
+      margin-top: 15px;
+    }
+
+    @media (max-width: 500px) {
+      .cell {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quebra-Cabeça de Cores</h1>
+
+  <div class="controls">
+    <label for="nivel">Dificuldade:</label>
+    <select id="nivel">
+      <option value="3">3x3</option>
+      <option value="4">4x4</option>
+      <option value="5">5x5</option>
+    </select>
+    <button onclick="game.init()">Iniciar</button>
+    <button onclick="game.restart()">Reiniciar</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="info">
+    <div class="digital">Movimentos: <span id="movimentos">0</span></div>
+    <div class="digital">Tempo: <span id="tempo">0</span> s</div>
+    <div id="mensagem"></div>
+  </div>
+
+  <div id="ranking">
+    <strong>Ranking (melhores tempos):</strong>
+    <ol id="listaRanking"></ol>
+  </div>
+
+  <div class="nav-links">
+      </div>
+
+  <audio id="audioClique" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+  <audio id="audioVitoria" src="https://www.soundjay.com/misc/small-bell-ring-01.wav"></audio>
+
+  <script>
+    const game = {
+      size: 3,
+      board: [],
+      moves: 0,
+      time: 0,
+      intervalId: null,
+      rankings: [],
+      colors: ['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8E44AD', '#FF9A9E', '#C9FFBF', '#FF6EC4', '#FDCB82', '#6A82FB', '#FAD0C4', '#A1C4FD', '#89F7FE', '#FBD3E9', '#BBDEFB', '#B9FBC0', '#FFB6B9', '#D0E6A5', '#E2F0CB', '#FFDAC1'],
+
+      init() {
+        const selectNivel = document.getElementById('nivel');
+        this.size = parseInt(selectNivel.value);
+        this.board = [];
+        this.moves = 0;
+        this.time = 0;
+        clearInterval(this.intervalId);
+        document.getElementById('mensagem').innerText = '';
+        document.getElementById('movimentos').innerText = this.moves;
+        document.getElementById('tempo').innerText = this.time;
+
+        this.loadRanking();
+        this.generateBoard();
+        this.shuffleBoard();
+        this.render();
+        this.startTimer();
+      },
+
+      generateBoard() {
+        const total = this.size * this.size;
+        const selectedColors = this.colors.slice(0, total);
+        this.board = selectedColors.map(color => ({ color, id: Math.random() }));
+      },
+
+      shuffleBoard() {
+        for (let i = this.board.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [this.board[i], this.board[j]] = [this.board[j], this.board[i]];
+        }
+      },
+
+      render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        grid.style.gridTemplateColumns = `repeat(${this.size}, 60px)`;
+
+        this.board.forEach((cell, idx) => {
+          const div = document.createElement('div');
+          div.className = 'cell';
+          div.style.background = `linear-gradient(135deg, ${cell.color}, #ffffff)`;
+          div.addEventListener('click', () => this.rotateCell(idx));
+          grid.appendChild(div);
+        });
+
+        document.getElementById('movimentos').innerText = this.moves;
+        document.getElementById('tempo').innerText = this.time;
+      },
+
+      rotateCell(index) {
+        document.getElementById('audioClique').play();
+
+        const totalColors = this.size * this.size;
+        const availableColors = this.colors.slice(0, totalColors);
+        const currentColor = this.board[index].color;
+        const currentIndex = availableColors.indexOf(currentColor);
+        const nextIndex = (currentIndex + 1) % availableColors.length;
+
+        this.board[index].color = availableColors[nextIndex];
+        this.moves++;
+        this.render();
+
+        if (this.isSolved()) {
+          this.endGame();
+        }
+      },
+
+      isSolved() {
+        return this.board.every(cell => cell.color === this.board[0].color);
+      },
+
+      startTimer() {
+        this.intervalId = setInterval(() => {
+          this.time++;
+          document.getElementById('tempo').innerText = this.time;
+        }, 1000);
+      },
+
+      endGame() {
+        clearInterval(this.intervalId);
+        document.getElementById('audioVitoria').play();
+
+        const mensagem = `Parabéns! Você completou em ${this.moves} movimentos e ${this.time} segundos.`;
+        document.getElementById('mensagem').innerText = mensagem;
+
+        this.rankings.push({ moves: this.moves, time: this.time });
+        this.rankings.sort((a, b) => a.time - b.time);
+        this.saveRanking();
+        this.updateRanking();
+      },
+
+      updateRanking() {
+        const listaRanking = document.getElementById('listaRanking');
+        listaRanking.innerHTML = '';
+        this.rankings.slice(0, 5).forEach(record => {
+          const li = document.createElement('li');
+          li.textContent = `${record.time} s / ${record.moves} mov.`;
+          listaRanking.appendChild(li);
+        });
+      },
+
+      saveRanking() {
+        localStorage.setItem('quebraCabecaRanking', JSON.stringify(this.rankings));
+      },
+
+      loadRanking() {
+        const data = localStorage.getItem('quebraCabecaRanking');
+        if (data) {
+          this.rankings = JSON.parse(data);
+          this.updateRanking();
+        }
+      },
+
+      restart() {
+        clearInterval(this.intervalId);
+        this.init();
+      }
+    };
+
+    window.onload = () => game.loadRanking();
+  </script>
+
+</body>
+<a class="nav-link" href="index.html">Página 1</a>
+    <a class="nav-link" href="index2.html">Página 2</a>
+    <a class="nav-link" href="index3.html">Página 3</a>
+</html>
