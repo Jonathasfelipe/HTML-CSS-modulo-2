@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Troca Automática de Fontes</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Merriweather&family=Crimson+Text&family=Libre+Baskerville&family=Roboto+Slab&family=Lora&family=Cormorant+Garamond&family=PT+Serif&family=EB+Garamond&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #6e6e6e;
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    nav {
+      position: absolute;
+      top: 20px;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: white;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    nav a:hover {
+      color: yellow;
+      transform: scale(1.2);
+    }
+
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      background: #fff;
+      color: #333;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+   
+    <a href="index4.html">4</a>
+  </nav>
+
+  <h1 id="texto">"Penso, logo existo." - René Descartes</h1>
+
+  <div>
+    <button onclick="setSpeed(3000)">Devagar</button>
+    <button onclick="setSpeed(1500)">Médio</button>
+    <button onclick="setSpeed(500)">Rápido</button>
+    <button onclick="toggleTroca()">Iniciar/Parar Troca</button>
+  </div>
+
+  <script>
+    const fontes = [
+      '"Playfair Display", serif',
+      '"Merriweather", serif',
+      '"Crimson Text", serif',
+      '"Libre Baskerville", serif',
+      '"Roboto Slab", serif',
+      '"Lora", serif',
+      '"Cormorant Garamond", serif',
+      '"PT Serif", serif',
+      '"EB Garamond", serif',
+      '"DM Serif Display", serif'
+    ];
+
+    const frases = [
+      '"Ser ou não ser, eis a questão." - Shakespeare',
+      '"Liberdade é pouco. O que eu desejo ainda não tem nome." - Clarice Lispector',
+      '"O que me preocupa não é o grito dos maus, mas o silêncio dos bons." - Martin Luther King',
+      '"Penso, logo existo." - René Descartes',
+      '"O homem é condenado a ser livre." - Jean-Paul Sartre'
+    ];
+
+    let indiceFonte = 0;
+    let indiceFrase = 0;
+    let intervalo = null;
+    const texto = document.getElementById('texto');
+    let velocidade = 2000;
+
+    function trocarFonteEFrase() {
+      texto.style.fontFamily = fontes[indiceFonte];
+      texto.textContent = frases[indiceFrase];
+      indiceFonte = (indiceFonte + 1) % fontes.length;
+      indiceFrase = (indiceFrase + 1) % frases.length;
+    }
+
+    function startTroca() {
+      intervalo = setInterval(trocarFonteEFrase, velocidade);
+    }
+
+    function stopTroca() {
+      clearInterval(intervalo);
+      intervalo = null;
+    }
+
+    function toggleTroca() {
+      if (intervalo) {
+        stopTroca();
+      } else {
+        startTroca();
+      }
+    }
+
+    function setSpeed(novaVelocidade) {
+      velocidade = novaVelocidade;
+      if (intervalo) {
+        stopTroca();
+        startTroca();
+      }
+    }
+
+    // Inicia troca automática ao carregar a página
+    startTroca();
+  </script>
+
+</body>
+</html>
