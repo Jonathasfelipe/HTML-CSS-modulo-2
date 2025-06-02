@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Círculo Cromático Animado com Controles Avançados</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    canvas { border: 1px solid #ccc; margin: 10px auto; display: block; }
+    .section { display: none; }
+    .active { display: block; }
+    button { margin: 5px; padding: 10px; }
+    input[type="range"] { width: 200px; }
+  </style>
+</head>
+<body>
+
+<h1>Círculo Cromático Animado</h1>
+<div>
+  <button onclick="showSection('canvas')">Canvas Puro</button>
+  <button onclick="showSection('p5')">p5.js</button>
+</div>
+
+<!-- Canvas Puro -->
+<div id="canvas" class="section active">
+  <h2>Canvas Puro</h2>
+  <canvas id="circleCanvas" width="400" height="400"></canvas>
+  <div>
+    <button onclick="changeSpeed('canvas', -0.5)">-</button>
+    <button onclick="togglePause('canvas')">Pausar/Continuar</button>
+    <button onclick="changeSpeed('canvas', 0.5)">+</button>
+  </div>
+  <label>Velocidade: <span id="speedCanvasDisplay"></span></label><br>
+  <input type="range" min="0.1" max="10" step="0.1" value="1" oninput="setSpeed('canvas', this.value)">
+</div>
+
+<!-- p5.js -->
+<div id="p5" class="section">
+  <h2>p5.js</h2>
+  <div id="p5Container"></div>
+  <div>
+    <button onclick="changeSpeed('p5', -0.5)">-</button>
+    <button onclick="togglePause('p5')">Pausar/Continuar</button>
+    <button onclick="changeSpeed('p5', 0.5)">+</button>
+  </div>
+  <label>Velocidade: <span id="speedP5Display"></span></label><br>
+  <input type="range" min="0.1" max="10" step="0.1" value="1" oninput="setSpeed('p5', this.value)">
+</div>
+
+<script>
+  let currentSection = 'canvas';
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    currentSection = id;
+  }
+
+  // --- Canvas Puro ---
+  const canvas = document.getElementById('circleCanvas');
+  const ctx = canvas.getContext('2d');
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 150;
+  let rotationCanvas = 0;
+  let speedCanvas = 1;
+  let pausedCanvas = false;
+
+  function drawCanvasCircle() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let angle = 0; angle < 360; angle++) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, (angle - 1) * Math.PI / 180, angle * Math.PI / 180);
+      ctx.closePath();
+      ctx.fillStyle = `hsl(${(angle + rotationCanvas) % 360}, 100%, 50%)`;
+      ctx.fill();
+    }
+    if (!pausedCanvas) rotationCanvas = (rotationCanvas + speedCanvas) % 360;
+    document.getElementById('speedCanvasDisplay').textContent = speedCanvas.toFixed(1);
+    requestAnimationFrame(drawCanvasCircle);
+  }
+
+  drawCanvasCircle();
+
+  // --- p5.js ---
+  let speedP5 = 1;
+  let pausedP5 = false;
+
+  new p5((p) => {
+    let r = 150;
+    let centerX = 200, centerY = 200;
+    let rotation = 0;
+
+    p.setup = () => {
+      const cnv = p.createCanvas(400, 400);
+      cnv.parent('p5Container');
+    };
+
+    p.draw = () => {
+      p.clear();
+      p.translate(centerX, centerY);
+      for (let angle = 0; angle < 360; angle++) {
+        p.fill(p.color(`hsl(${(angle + rotation) % 360}, 100%, 50%)`));
+        p.noStroke();
+        p.beginShape();
+        p.vertex(0, 0);
+        p.vertex(r * p.cos(p.radians(angle - 1)), r * p.sin(p.radians(angle - 1)));
+        p.vertex(r * p.cos(p.radians(angle)), r * p.sin(p.radians(angle)));
+        p.endShape(p.CLOSE);
+      }
+      if (!pausedP5) rotation = (rotation + speedP5) % 360;
+      document.getElementById('speedP5Display').textContent = speedP5.toFixed(1);
+    };
+  });
+
+  // --- Controles Canvas e p5.js ---
+  function changeSpeed(type, delta) {
+    if (type === 'canvas') {
+      speedCanvas = Math.max(0.1, parseFloat(speedCanvas) + delta);
+      document.querySelector('#canvas input[type="range"]').value = speedCanvas;
+    } else if (type === 'p5') {
+      speedP5 = Math.max(0.1, parseFloat(speedP5) + delta);
+      document.querySelector('#p5 input[type="range"]').value = speedP5;
+    }
+  }
+
+  function togglePause(type) {
+    if (type === 'canvas') {
+      pausedCanvas = !pausedCanvas;
+    } else if (type === 'p5') {
+      pausedP5 = !pausedP5;
+    }
+  }
+
+  function setSpeed(type, value) {
+    if (type === 'canvas') {
+      speedCanvas = parseFloat(value);
+    } else if (type === 'p5') {
+      speedP5 = parseFloat(value);
+    }
+  }
+
+  // --- Alternância Automática entre Canvas e p5.js ---
+  setInterval(() => {
+    if (currentSection === 'canvas') {
+      showSection('p5');
+    } else {
+      showSection('canvas');
+    }
+  }, 10000); // a cada 10 segundos
+</script>
+
+<!-- p5.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+</body>
+</html>

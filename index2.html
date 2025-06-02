@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Possibilidades com HTML e CSS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh; 
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #000;
+      background: #fff;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: #121212;
+      color: #f4f4f4;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; 
+      padding: 20px;
+    }
+
+    header h1 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 2.5em;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    h2 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.8em;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 1em;
+      text-align: justify;
+      margin: 10px 0;
+    }
+
+    pre {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    body.dark-mode pre {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #c62828;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px 0;
+      font-size: 0.9em;
+    }
+
+    button {
+      margin: 10px 5px;
+      padding: 10px 15px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #333;
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2em; }
+      h2 { font-size: 1.5em; }
+      .container { padding: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Explorando as Possibilidades com HTML e CSS</h1>
+    </header>
+
+    <main>
+      <section>
+        <h2>Exemplos de Aplicações</h2>
+        <p id="frase">Com HTML e CSS é possível criar layouts incríveis.</p>
+        <button onclick="trocarFrase()">Trocar Frase</button>
+        <button onclick="alternarFonte()">Trocar Fonte</button>
+        <button onclick="alternarModo()">Alternar Modo Claro/Escuro</button>
+      </section>
+
+      <section>
+        <h2>Algumas Possibilidades:</h2>
+        <ul>
+          <li>Estruturar conteúdo semântico e acessível.</li>
+          <li>Criar animações com CSS puro.</li>
+          <li>Estilizar elementos com efeitos de hover.</li>
+          <li>Criar layouts responsivos usando media queries.</li>
+          <li>Usar variáveis CSS para facilitar manutenção de estilos.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Exemplo de código CSS</h2>
+        <pre><code>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button:hover {
+  background-color: #333;
+}
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Exemplo de código HTML</h2>
+        <pre><code>
+&lt;button onclick="alternarModo()"&gt;
+  Alternar Modo
+&lt;/button&gt;
+
+&lt;p id="frase"&gt;Texto inicial&lt;/p&gt;
+        </code></pre>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2025 - Jonathas Felipe
+    </footer>
+  </div>
+
+  <script>
+    const frases = [
+      "Com HTML e CSS é possível criar layouts incríveis.",
+      "Você pode criar animações sem JavaScript.",
+      "Layouts responsivos são feitos com media queries.",
+      "Fontes personalizadas dão personalidade ao site.",
+      "O modo escuro melhora a experiência do usuário."
+    ];
+
+    let indexFrase = 0;
+    const fraseElemento = document.getElementById('frase');
+
+    function trocarFrase() {
+      indexFrase = (indexFrase + 1) % frases.length;
+      fraseElemento.textContent = frases[indexFrase];
+    }
+
+    let fonteAlternada = false;
+    function alternarFonte() {
+      if (fonteAlternada) {
+        document.body.style.fontFamily = "'Shadows Into Light', cursive";
+      } else {
+        document.body.style.fontFamily = "'Permanent Marker', cursive";
+      }
+      fonteAlternada = !fonteAlternada;
+    }
+
+    function alternarModo() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+  
+   
+   </nav>
+   <a href="index.html">1</a>
+    <a href="index2.html">2</a>
+    <a href="index3.html">3</a>
+    <a href="index4.html">4</a>
+    <a href="index5.html">5</a>
+    <a href="index7.html">6</a>
+    <a href="index8.html">7</a>
+    <a href="index9.html">8</a>
+    
+    </nav>
+</body>
+</html>

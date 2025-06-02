@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Troca Automática de Fontes e Frases</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Merriweather&family=Crimson+Text&family=Libre+Baskerville&family=Roboto+Slab&family=Lora&family=Cormorant+Garamond&family=PT+Serif&family=EB+Garamond&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #6e6e6e;
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    nav {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: white;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    nav a:hover {
+      color: yellow;
+      transform: scale(1.2);
+    }
+
+    h1 {
+      max-width: 90%;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .pulse {
+      animation: pulse 0.5s;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    button, input[type="range"] {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      font-size: 1em;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    button {
+      background: #fff;
+      color: #333;
+    }
+
+    button:hover {
+      background: #ccc;
+      transform: scale(1.05);
+    }
+
+    input[type="range"] {
+      width: 150px;
+    }
+
+    .speed-label {
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .dark-mode {
+      background: #121212;
+      color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">1</a>
+    <a href="index2.html">2</a>
+    <a href="index3.html">3</a>
+    <a href="index4.html">4</a>
+    <a href="index5.html">5</a>
+    <a href="index7.html">6</a>
+    <a href="index8.html">7</a>
+    <a href="index9.html">8</a>
+  </nav>
+
+  <h1 id="texto">"Penso, logo existo." - René Descartes</h1>
+
+  <div class="controls">
+    <button onclick="toggleTroca()">Iniciar/Parar</button>
+    <button onclick="mudarFrase()">Trocar Frase</button>
+    <button onclick="mudarFonte()">Trocar Fonte</button>
+    <button onclick="alternarModo()">Modo Claro/Escuro</button>
+    <input type="range" min="500" max="5000" step="100" value="2000" id="speedControl">
+  </div>
+  
+  <div class="speed-label">Velocidade: <span id="speedValue">2000</span> ms</div>
+
+  <script>
+    const fontes = [
+      '"Playfair Display", serif',
+      '"Merriweather", serif',
+      '"Crimson Text", serif',
+      '"Libre Baskerville", serif',
+      '"Roboto Slab", serif',
+      '"Lora", serif',
+      '"Cormorant Garamond", serif',
+      '"PT Serif", serif',
+      '"EB Garamond", serif',
+      '"DM Serif Display", serif'
+    ];
+
+    const frases = [
+      '"Ser ou não ser, eis a questão." - Shakespeare',
+      '"Liberdade é pouco. O que eu desejo ainda não tem nome." - Clarice Lispector',
+      '"O que me preocupa não é o grito dos maus, mas o silêncio dos bons." - Martin Luther King',
+      '"Penso, logo existo." - René Descartes',
+      '"O homem é condenado a ser livre." - Jean-Paul Sartre',
+      '"A vida é aquilo que acontece enquanto você está ocupado fazendo outros planos." - John Lennon',
+      '"A felicidade é a única coisa que podemos dar sem possuir." - Voltaire',
+      '"O importante não é vencer todos os dias, mas lutar sempre." - Waldemar Valle Martins',
+      '"Tudo vale a pena quando a alma não é pequena." - Fernando Pessoa'
+    ];
+
+    let indiceFonte = 0;
+    let indiceFrase = 0;
+    let intervalo = null;
+    const texto = document.getElementById('texto');
+    const speedControl = document.getElementById('speedControl');
+    const speedValue = document.getElementById('speedValue');
+    let velocidade = parseInt(speedControl.value);
+
+    function trocarFonteEFrase() {
+      texto.classList.add('pulse');
+      texto.style.opacity = 0;
+      setTimeout(() => {
+        texto.style.fontFamily = fontes[indiceFonte];
+        texto.textContent = frases[indiceFrase];
+        texto.style.opacity = 1;
+        indiceFonte = (indiceFonte + 1) % fontes.length;
+        indiceFrase = (indiceFrase + 1) % frases.length;
+      }, 500);
+      setTimeout(() => texto.classList.remove('pulse'), 500);
+    }
+
+    function mudarFrase() {
+      texto.classList.add('pulse');
+      indiceFrase = (indiceFrase + 1) % frases.length;
+      texto.textContent = frases[indiceFrase];
+      setTimeout(() => texto.classList.remove('pulse'), 500);
+    }
+
+    function mudarFonte() {
+      texto.classList.add('pulse');
+      indiceFonte = (indiceFonte + 1) % fontes.length;
+      texto.style.fontFamily = fontes[indiceFonte];
+      setTimeout(() => texto.classList.remove('pulse'), 500);
+    }
+
+    function startTroca() {
+      if (!intervalo) {
+        intervalo = setInterval(trocarFonteEFrase, velocidade);
+      }
+    }
+
+    function stopTroca() {
+      clearInterval(intervalo);
+      intervalo = null;
+    }
+
+    function toggleTroca() {
+      if (intervalo) {
+        stopTroca();
+      } else {
+        startTroca();
+      }
+    }
+
+    speedControl.addEventListener('input', function() {
+      velocidade = parseInt(this.value);
+      speedValue.textContent = velocidade;
+      if (intervalo) {
+        stopTroca();
+        startTroca();
+      }
+    });
+
+    function alternarModo() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function aplicarModoEscuroAutomatico() {
+      const hora = new Date().getHours();
+      if (hora >= 18 || hora < 6) {
+        document.body.classList.add('dark-mode');
+      }
+    }
+
+    aplicarModoEscuroAutomatico();
+    startTroca();
+  </script>
+
+</body>
+</html>
