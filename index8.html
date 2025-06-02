@@ -18,7 +18,6 @@
       height: 100%;
     }
   </style>
- 
 </head>
 <body>
 
@@ -28,52 +27,45 @@
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
 
-  // Ajusta o tamanho do canvas para a janela
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  // Caracteres que vão cair - letras, números e símbolos do Matrix
   const letters = 'アカサタナハマヤラワガザダバパABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-  // Tamanho da fonte e quantidade de colunas (baseado na largura da tela)
   const fontSize = 18;
   const columns = Math.floor(canvas.width / fontSize);
 
-  // Array para armazenar a posição y de cada coluna (inicialmente todos no topo)
   const drops = Array(columns).fill(0);
 
   function draw() {
-    // Fundo preto com leve transparência para efeito de "rastro"
     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#0F0'; // Verde matrix
+    ctx.fillStyle = '#0F0';
     ctx.font = fontSize + 'px monospace';
 
     for (let i = 0; i < drops.length; i++) {
-      // Escolhe um caractere aleatório
       const text = letters.charAt(Math.floor(Math.random() * letters.length));
-      // Desenha o caractere na posição (coluna * fontSize, y * fontSize)
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-      // Resetar o drop para o topo aleatoriamente após ultrapassar o fundo
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
       }
-
-      // Move a letra para baixo
       drops[i]++;
     }
   }
 
-  // Atualiza o canvas ~30 vezes por segundo
   setInterval(draw, 33);
 
-  // Ajusta o canvas ao redimensionar a janela
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
+
+  // Redireciona automaticamente após 5 segundos
+  setTimeout(() => {
+    window.location.href = 'index9.html';
+  }, 5000);
 </script>
 
 </body>
