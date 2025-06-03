@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Possibilidades com HTML e CSS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh; 
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 18px;
+      line-height: 1.6;
+      color: #111;
+      background: #f7f7f7;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: #121212;
+      color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; 
+    }
+
+    header h1 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 3em;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 2em;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    p {
+      font-size: 1.1em;
+      text-align: justify;
+      margin: 15px 0;
+    }
+
+    ul {
+      list-style: disc;
+      margin: 20px;
+      padding-left: 20px;
+    }
+
+    pre {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+
+    body.dark-mode pre {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #c62828;
+      font-size: 0.95em;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px 0;
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+
+    button {
+      margin: 10px 8px;
+      padding: 12px 20px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background-color: #333;
+      transform: scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      background: #000;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: 1em;
+    }
+
+    .nav-links a:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2.2em; }
+      h2 { font-size: 1.5em; }
+      .container { padding: 20px; }
+      button, .nav-links a { font-size: 0.9em; padding: 10px 12px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <nav class="nav-links">
+      <a href="index.html">1</a>
+      <a href="index2.html">2</a>
+      <a href="index3.html">3</a>
+      <a href="index4.html">4</a>
+      <a href="index5.html">5</a>
+      <a href="index6.html">6</a>
+      <a href="index8.html">7</a>
+      <a href="index9.html">8</a>
+    </nav>
+
+    <header>
+      <h1>Explorando as Possibilidades com HTML e CSS</h1>
+    </header>
+
+    <main>
+      <section>
+        <h2>Exemplos de Aplicações</h2>
+        <p id="frase">Com HTML e CSS é possível criar layouts incríveis.</p>
+        <button onclick="trocarFrase()">Trocar Frase</button>
+        <button onclick="alternarFonte()">Trocar Fonte</button>
+        <button onclick="alternarModo()">Alternar Modo Claro/Escuro</button>
+      </section>
+
+      <section>
+        <h2>Algumas Possibilidades:</h2>
+        <ul>
+          <li>Estruturar conteúdo semântico e acessível.</li>
+          <li>Criar animações com CSS puro.</li>
+          <li>Estilizar elementos com efeitos de hover.</li>
+          <li>Criar layouts responsivos usando media queries.</li>
+          <li>Usar variáveis CSS para facilitar manutenção de estilos.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Exemplo de código CSS</h2>
+        <pre><code>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button:hover {
+  background-color: #333;
+}
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Exemplo de código HTML</h2>
+        <pre><code>
+&lt;button onclick="alternarModo()"&gt;
+  Alternar Modo
+&lt;/button&gt;
+
+&lt;p id="frase"&gt;Texto inicial&lt;/p&gt;
+        </code></pre>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2025 - Jonathas Felipe
+    </footer>
+  </div>
+
+  <script>
+    const frases = [
+      "Com HTML e CSS é possível criar layouts incríveis.",
+      "Você pode criar animações sem JavaScript.",
+      "Layouts responsivos são feitos com media queries.",
+      "Fontes personalizadas dão personalidade ao site.",
+      "O modo escuro melhora a experiência do usuário."
+    ];
+
+    let indexFrase = 0;
+    const fraseElemento = document.getElementById('frase');
+
+    function trocarFrase() {
+      indexFrase = (indexFrase + 1) % frases.length;
+      fraseElemento.textContent = frases[indexFrase];
+    }
+
+    let fonteAlternada = false;
+    function alternarFonte() {
+      if (fonteAlternada) {
+        document.body.style.fontFamily = "'Shadows Into Light', cursive";
+      } else {
+        document.body.style.fontFamily = "'Permanent Marker', cursive";
+      }
+      fonteAlternada = !fonteAlternada;
+    }
+
+    function alternarModo() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+
+</body>
+</html>
