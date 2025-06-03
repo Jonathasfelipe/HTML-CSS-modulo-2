@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendário Interativo com Relatório</title>
+  <style>
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .report {
+      background: #1DB954;
+      color: #fff;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      width: 300px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .calendar {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      width: 300px;
+    }
+
+    .calendar header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar header h2 {
+      font-size: 1.5em;
+    }
+
+    .calendar .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .calendar .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      gap: 5px;
+    }
+
+    .calendar .day {
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .calendar .day:hover {
+      background: #1DB954;
+      color: #fff;
+    }
+
+    .calendar .today {
+      background: #1DB954;
+      color: #fff;
+    }
+
+    button {
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #1DB954;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+<div id="digitalClock" style="font-family: monospace; font-size: 2em;"></div>
+
+<script>
+function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    document.getElementById('digitalClock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// Atualiza o relógio imediatamente e depois a cada segundo
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+<div class="report">
+  <h3>Relatório Mensal</h3>
+  <p id="report-text">Carregando relatório...</p>
+</div>
+
+<div class="calendar">
+  <header>
+    <button id="prev">&lt;</button>
+    <h2 id="monthYear">Mês Ano</h2>
+    <button id="next">&gt;</button>
+  </header>
+
+  <div class="weekdays">
+    <div>Dom</div>
+    <div>Seg</div>
+    <div>Ter</div>
+    <div>Qua</div>
+    <div>Qui</div>
+    <div>Sex</div>
+    <div>Sáb</div>
+  </div>
+
+  <div class="days" id="days"></div>
+</div>
+
+<script>
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  let date = new Date();
+  let currentMonth = date.getMonth();
+  let currentYear = date.getFullYear();
+
+  const daysContainer = document.getElementById('days');
+  const monthYear = document.getElementById('monthYear');
+  const reportText = document.getElementById('report-text');
+
+  function updateCalendar() {
+    daysContainer.innerHTML = '';
+
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    monthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    
+    updateReport();
+
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      daysContainer.appendChild(empty);
+    }
+
+    for (let i = 1; i <= totalDays; i++) {
+      const day = document.createElement('div');
+      day.classList.add('day');
+      day.textContent = i;
+
+      if (
+        i === date.getDate() &&
+        currentMonth === date.getMonth() &&
+        currentYear === date.getFullYear()
+      ) {
+        day.classList.add('today');
+      }
+
+      daysContainer.appendChild(day);
+    }
+  }
+
+  function updateReport() {
+    reportText.innerHTML = `
+      Mês atual: <strong>${monthNames[currentMonth]}</strong><br>
+      Ano: <strong>${currentYear}</strong><br>
+      Total de dias: <strong>${new Date(currentYear, currentMonth + 1, 0).getDate()}</strong>
+    `;
+  }
+
+  document.getElementById('prev').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    updateCalendar();
+  });
+
+  document.getElementById('next').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    updateCalendar();
+  });
+
+  updateCalendar();
+</script>
+<nav>
+     <a href="index.html">1</a>
+    <a href="index2.html">2</a>
+    <a href="index3.html">3</a>
+    <a href="index4.html">4</a>
+    <a href="index5.html">5</a>
+    <a href="index6.html">6</a>
+    <a href="index8.html">7</a>
+    <a href="index9.html">8</a>
+     
+    
+  </nav>
+</body>
+</html>
