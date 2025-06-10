@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tetris Touchscreen com Navegação</title>
+    <style>
+        body {
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+            font-family: sans-serif;
+            overflow: hidden;
+            touch-action: none; /* Evita scroll acidental no mobile */
+            padding-top: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #444, #666);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(45deg, #666, #888);
+            transform: scale(1.05);
+        }
+
+        #score {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #game {
+            display: grid;
+            grid-template-rows: repeat(20, 40px);
+            grid-template-columns: repeat(10, 40px);
+            gap: 2px;
+            background: #222;
+            margin-bottom: 10px;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background: #333;
+        }
+
+        .filled {
+            background: #f39c12;
+        }
+
+        #game-over {
+            font-size: 32px;
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-links">
+        <a class="nav-link" href="index.html">1</a>
+        <a class="nav-link" href="index2.html">2</a>
+        <a class="nav-link" href="index3.html">3</a>
+        <a class="nav-link" href="index4.html">4</a>
+        <a class="nav-link" href="index5.html">5</a>
+        <a class="nav-link" href="index6.html">6</a>
+        <a class="nav-link" href="index7.html">7</a>
+        <a class="nav-link" href="index8.html">8</a>
+        <a class="nav-link" href="index9.html">9</a>
+    </div>
+
+    <div id="score">Score: 0</div>
+    <div id="game"></div>
+    <div id="game-over">GAME OVER</div>
+
+    <script>
+        const ROWS = 20;
+        const COLS = 10;
+        const game = document.getElementById('game');
+        const scoreDisplay = document.getElementById('score');
+        const gameOverDisplay = document.getElementById('game-over');
+
+        let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        let score = 0;
+        let gameOver = false;
+
+        for (let i = 0; i < ROWS * COLS; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            game.appendChild(cell);
+        }
+
+        const cells = document.querySelectorAll('.cell');
+
+        const pieces = [
+            [[1, 1], [1, 1]],                   // quadrado
+            [[1, 1, 1, 1]],                      // linha
+            [[0, 1, 0], [1, 1, 1]],              // T
+            [[1, 0, 0], [1, 1, 1]],              // L
+            [[0, 0, 1], [1, 1, 1]]               // J
+        ];
+
+        let currentPiece = getRandomPiece();
+        let currentX = 3;
+        let currentY = 0;
+
+        function getRandomPiece() {
+            const piece = pieces[Math.floor(Math.random() * pieces.length)];
+            return piece;
+        }
+
+        function draw() {
+            cells.forEach(cell => cell.classList.remove('filled'));
+
+            grid.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        cells[y * COLS + x].classList.add('filled');
+                    }
+                });
+            });
+
+            currentPiece.forEach((row, dy) => {
+                row.forEach((value, dx) => {
+                    if (value) {
+                        const x = currentX + dx;
+                        const y = currentY + dy;
+                        if (y >= 0 && x >= 0 && x < COLS && y < ROWS) {
+                            cells[y * COLS + x].classList.add('filled');
+                        }
+                    }
+                });
+            });
+        }
+
+        function movePiece(dx, dy) {
+            if (gameOver) return;
+            if (!collision(dx, dy, currentPiece)) {
+                currentX += dx;
+                currentY += dy;
+            } else if (dy === 1) {
+                currentPiece.forEach((row, dy) => {
+                    row.forEach((value, dx) => {
+                        if (value) {
+                            const x = currentX + dx;
+                            const y = currentY + dy;
+                            if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+                                grid[y][x] = 1;
+                            }
+                        }
+                    });
+                });
+                removeLines();
+                currentPiece = getRandomPiece();
+                currentX = 3;
+                currentY = 0;
+                if (collision(0, 0, currentPiece)) {
+                    gameOver = true;
+                    gameOverDisplay.style.display = 'block';
+                }
+            }
+            draw();
+        }
+
+        function collision(dx, dy, piece) {
+            for (let y = 0; y < piece.length; y++) {
+                for (let x = 0; x < piece[y].length; x++) {
+                    if (piece[y][x]) {
+                        const newX = currentX + x + dx;
+                        const newY = currentY + y + dy;
+                        if (
+                            newX < 0 ||
+                            newX >= COLS ||
+                            newY >= ROWS ||
+                            (newY >= 0 && grid[newY][newX])
+                        ) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function rotatePiece() {
+            const rotated = currentPiece[0].map((_, i) =>
+                currentPiece.map(row => row[i]).reverse()
+            );
+            if (!collision(0, 0, rotated)) {
+                currentPiece = rotated;
+            }
+            draw();
+        }
+
+        function removeLines() {
+            let linesRemoved = 0;
+            grid = grid.filter(row => {
+                if (row.every(cell => cell)) {
+                    linesRemoved++;
+                    return false;
+                }
+                return true;
+            });
+            while (grid.length < ROWS) {
+                grid.unshift(Array(COLS).fill(0));
+            }
+            score += linesRemoved * 100;
+            scoreDisplay.innerText = `Score: ${score}`;
+        }
+
+        // Loop de queda automática
+        setInterval(() => {
+            movePiece(0, 1);
+        }, 500);
+
+        // Touchscreen controls
+        let startX = 0;
+        let startY = 0;
+        let moved = false;
+        let touchStartTime = 0;
+
+        document.addEventListener('touchstart', e => {
+            if (gameOver) return;
+
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            moved = false;
+            touchStartTime = Date.now();
+        });
+
+        document.addEventListener('touchmove', e => {
+            if (gameOver) return;
+
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - startX;
+            const deltaY = touch.clientY - startY;
+
+            const threshold = 20;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > threshold) {
+                    movePiece(1, 0);
+                    startX = touch.clientX;
+                    moved = true;
+                } else if (deltaX < -threshold) {
+                    movePiece(-1, 0);
+                    startX = touch.clientX;
+                    moved = true;
+                }
+            } else {
+                if (deltaY > threshold) {
+                    movePiece(0, 1);
+                    startY = touch.clientY;
+                    moved = true;
+                }
+            }
+        });
+
+        document.addEventListener('touchend', e => {
+            if (gameOver) return;
+
+            const touchDuration = Date.now() - touchStartTime;
+
+            if (!moved && touchDuration < 200) {
+                rotatePiece();
+            }
+        });
+
+        // Inicializa o jogo
+        draw();
+    </script>
+</body>
+</html>
