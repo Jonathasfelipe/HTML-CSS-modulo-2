@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema Solar</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    .galaxy {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #0af;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 2px #33bbff);
+      opacity: 0.8;
+    }
+    .shooting-star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 6px white;
+      animation: shoot 1.5s linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes shoot {
+      0% { transform: translate(0, 0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translate(-200px, 200px); opacity: 0; }
+    }
+    .solar-system {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .sun {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #FFD700, #FFA500);
+      border-radius: 50%;
+      box-shadow: 0 0 60px 30px rgba(255,215,0,0.5);
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+    .orbit {
+      position: absolute;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit linear infinite;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: white;
+    }
+    .planet:hover {
+      transform: scale(1.5);
+      z-index: 10;
+    }
+    .planet:hover::after {
+      content: attr(data-info);
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      white-space: pre;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(var(--distance)) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(var(--distance)) rotate(-360deg); }
+    }
+    .moon {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ccc;
+      border-radius: 50%;
+      animation: moonOrbit 2s linear infinite;
+    }
+    @keyframes moonOrbit {
+      from { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+    }
+    .ring {
+      position: absolute;
+      width: 36px;
+      height: 8px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      transform: rotate(25deg);
+    }
+    .info-panel {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 12px;
+      border-radius: 10px;
+      width: 260px;
+      font-size: 14px;
+      line-height: 1.5;
+      z-index: 20;
+    }
+    .info-panel time {
+      font-weight: bold;
+      color: #0af;
+    }
+    .neon {
+      box-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="galaxy" id="galaxy">
+    <div class="solar-system">
+      <div class="sun"></div><div class="orbit" style="width: 100px; height: 100px;"></div>
+  <div class="planet neon" style="width: 8px; height: 8px; background: #aaa; --distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp média: 167 °C\nDistância do Sol: 57,9 mi km"></div>
+
+  <div class="orbit" style="width: 140px; height: 140px;"></div>
+  <div class="planet" style="width: 10px; height: 10px; background: #ffcc66; --distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km\nTemp média: 464 °C\nDistância do Sol: 108 mi km"></div>
+
+  <div class="orbit" style="width: 180px; height: 180px;"></div>
+  <div class="planet" style="width: 16px; height: 16px; background: transparent; --distance: 90px; animation-duration: 10s;" data-info="Terra 🌍\nDiâmetro: 12.742 km\nTemp média: 15 °C\nDistância do Sol: 149,6 mi km">
+    🌍<div class="moon"></div>
+  </div>
+
+  <div class="orbit" style="width: 240px; height: 240px;"></div>
+  <div class="planet" style="width: 14px; height: 14px; background: transparent; --distance: 120px; animation-duration: 13s;" data-info="Marte 🔴\nDiâmetro: 6.779 km\nTemp média: -60 °C\nDistância do Sol: 227,9 mi km">🔴</div>
+
+  <div class="orbit" style="width: 340px; height: 340px;"></div>
+  <div class="planet neon" style="width: 20px; height: 20px; background: #f90; --distance: 170px; animation-duration: 20s;" data-info="Júpiter\nDiâmetro: 139.820 km\nTemp média: -110 °C\nDistância do Sol: 778 mi km"></div>
+
+  <div class="orbit" style="width: 440px; height: 440px;"></div>
+  <div class="planet" style="width: 18px; height: 18px; background: transparent; --distance: 220px; animation-duration: 25s;" data-info="Saturno 🪐\nDiâmetro: 116.460 km\nTemp média: -140 °C\nDistância do Sol: 1.433 mi km">🪐<div class="ring"></div></div>
+
+  <div class="orbit" style="width: 520px; height: 520px;"></div>
+  <div class="planet neon" style="width: 14px; height: 14px; background: #0ff; --distance: 260px; animation-duration: 30s;" data-info="Urano\nDiâmetro: 50.724 km\nTemp média: -195 °C\nDistância do Sol: 2.872 mi km"></div>
+
+  <div class="orbit" style="width: 600px; height: 600px;"></div>
+  <div class="planet neon" style="width: 14px; height: 14px; background: #00f; --distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp média: -200 °C\nDistância do Sol: 4.495 mi km"></div>
+</div>
+<div class="info-panel">
+  <strong>Explore os planetas</strong><br/>
+  Passe o mouse sobre um planeta para ver detalhes.<br/><br/>
+  <div>Data Atual: <time id="current-date"></time></div>
+  Estrelas cadentes aparecerão ocasionalmente!
+</div>
+
+  </div>  <script>
+    const galaxy = document.getElementById('galaxy');
+    for (let i = 0; i < 20; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.opacity = 0.3 + Math.random() * 0.5;
+      galaxy.appendChild(star);
+    }
+
+    setInterval(() => {
+      const shootingStar = document.createElement('div');
+      shootingStar.classList.add('shooting-star');
+      shootingStar.style.top = Math.random() * 80 + 'vh';
+      shootingStar.style.left = Math.random() * 80 + 20 + 'vw';
+      galaxy.appendChild(shootingStar);
+      setTimeout(() => shootingStar.remove(), 1500);
+    }, 8000);
+
+    const dateEl = document.getElementById('current-date');
+    const now = new Date();
+    dateEl.textContent = now.toLocaleString('pt-BR');
+  </script></body>
+</html>
