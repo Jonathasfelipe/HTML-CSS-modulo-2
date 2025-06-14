@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema Solar com Som</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+  <!-- Seu <style> pode continuar aqui -->
+</head>
+<body>
+    <audio id="bg-audio" src="som-fundo.mp3" loop></audio>
+<audio id="click-sound" src="click.mp3"></audio>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #000 0%, #020024 100%);
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      position: absolute;
+      top: 0; left: 0;
+      z-index: 0;
+    }
+    .galaxy, .solar-system, .blackhole, .alien-pixel {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .star, .shooting-star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+    .shooting-star {
+      animation: shoot 1.5s linear;
+      box-shadow: 0 0 6px white;
+    }
+    @keyframes shoot {
+      0% { transform: translate(0, 0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translate(-200px, 200px); opacity: 0; }
+    }
+    .solar-system {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sun {
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #FFD700, #FFA500);
+      border-radius: 50%;
+      box-shadow: 0 0 60px 30px rgba(255,215,0,0.5);
+      z-index: 3;
+    }
+    .orbit {
+      position: absolute;
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      animation: orbit linear infinite;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: white;
+    }
+    .planet:hover {
+      transform: scale(1.5);
+      z-index: 10;
+    }
+    .planet:hover::after {
+      content: attr(data-info);
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      white-space: pre;
+      pointer-events: none;
+    }
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(var(--distance)) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(var(--distance)) rotate(-360deg); }
+    }
+    .moon {
+      width: 4px;
+      height: 4px;
+      background: #ccc;
+      border-radius: 50%;
+      animation: moonOrbit 2s linear infinite;
+    }
+    @keyframes moonOrbit {
+      from { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+    }
+    .ring {
+      width: 36px;
+      height: 8px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      transform: rotate(25deg);
+    }
+  </style>
+</head>
+<body>
+    
+   <canvas id="galaxyCanvas"></canvas>  <div class="galaxy" id="galaxy"></div>
+  <div class="solar-system">
+    <div class="sun"></div>
+    <div id="halley" class="cometa-halley"></div>
+    <div class="orbit" style="width: 100px; height: 100px;"></div>
+    <div class="planet" style="width: 8px; height: 8px; background: #aaa; --distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp: 167°C"></div><div class="orbit" style="width: 140px; height: 140px;"></div>
+<div class="planet" style="width: 10px; height: 10px; background: #ffcc66; --distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km\nTemp: 464°C"></div>
+
+<div class="orbit" style="width: 180px; height: 180px;"></div>
+    <div class="planet" style="width: 16px; height: 16px; background: transparent; --distance: 90px; animation-duration: 10s;" data-info="Terra 🌍\nDiâmetro: 12.742 km\nTemp: 15°C">
+      🌍<div class="moon"></div>
+    </div>
+
+<div class="orbit" style="width: 240px; height: 240px;"></div>
+<div class="planet" style="width: 14px; height: 14px; background: transparent; --distance: 120px; animation-duration: 13s;" data-info="Marte 🔴\nDiâmetro: 6.779 km\nTemp: -60°C">🔴</div>
+
+<div class="orbit" style="width: 340px; height: 340px;"></div>
+<div class="planet" style="width: 20px; height: 20px; background: #f90; --distance: 170px; animation-duration: 20s;" data-info="Júpiter\nDiâmetro: 139.820 km\nTemp: -110°C"></div>
+
+<div class="orbit" style="width: 440px; height: 440px;"></div>
+    <div class="planet" style="width: 18px; height: 18px; background: transparent; --distance: 220px; animation-duration: 25s;" data-info="Saturno 🪐\nDiâmetro: 116.460 km\nTemp: -140°C">🪐</div>
+    <div class="orbit" style="width: 520px; height: 520px;"></div>
+<div class="planet" style="width: 14px; height: 14px; background: #0ff; --distance: 260px; animation-duration: 30s;" data-info="Urano\nDiâmetro: 50.724 km\nTemp: -195°C"></div>
+
+<div class="orbit" style="width: 600px; height: 600px;"></div>
+<div class="planet" style="width: 14px; height: 14px; background: #00f; --distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp: -200°C"></div>
+
+   <script src="galaxias.js"></script>  
+   <script>
+    const galaxy = document.getElementById('galaxy');
+    for (let i = 0; i < 20; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      galaxy.appendChild(star);
+    }
+
+    function spawnShootingStar() {
+      const shootingStar = document.createElement('div');
+      shootingStar.classList.add('shooting-star');
+      shootingStar.style.top = Math.random() * 80 + 'vh';
+      shootingStar.style.left = Math.random() * 80 + 'vw';
+      galaxy.appendChild(shootingStar);
+      setTimeout(() => shootingStar.remove(), 1500);
+    }
+    setInterval(spawnShootingStar, 8000);
+
+    const bgAudio = document.getElementById('bg-audio');
+    document.addEventListener("click", () => {
+      if (bgAudio.paused) bgAudio.play().catch(() => {});
+    });
+
+    const clickSound = document.getElementById("click-sound");
+    document.querySelectorAll(".planet").forEach(p => {
+      p.addEventListener("mouseenter", () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+  </script>
+  <script src="script.js"></script>
+  </body>
+</html>

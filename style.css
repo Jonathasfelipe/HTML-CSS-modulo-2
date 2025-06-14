@@ -1,55 +1,145 @@
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ================== ESTRELAS ================== */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: twinkle 4s infinite ease-in-out;
 }
 
-/* Fundo gradiente de azul para branco */
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #007bff, #ffffff);
-  color: #333;
-  min-height: 100vh;
-  padding: 20px;
+.bright {
+  width: 3px;
+  height: 3px;
+  opacity: 1;
+  animation: twinkleBright 6s infinite ease-in-out;
 }
 
-/* Caixa para cada tópico */
-.caixa {
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 2px solid #007bff;
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+@keyframes twinkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.2; }
 }
 
-/* Subtítulo sublinhado */
-h2 {
-  text-decoration: underline;
-  color: #007bff;
-  margin-bottom: 10px;
+@keyframes twinkleBright {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
-/* Código destacado */
-pre {
-  background-color: #f1f1f1;
-  padding: 10px;
-  border-radius: 8px;
-  overflow-x: auto;
+/* ================== METEOROS ================== */
+.meteor {
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, red, yellow, transparent);
+  transform: rotate(-45deg);
+  animation: meteorFall 2.8s linear forwards;
+  z-index: 3;
+  opacity: 1;
+  filter: blur(1px);
+  box-shadow: 0 0 10px yellow;
 }
 
-/* Botão estilizado */
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 10px;
+@keyframes meteorFall {
+  0% {
+    transform: translate(0, 0) rotate(-45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100vw, 100vh) rotate(-45deg);
+    opacity: 0;
+  }
 }
 
-button:hover {
-  background-color: #0056b3;
+/* ===== ANIMAÇÃO HORIZONTAL DO COMETA HALLEY ===== */
+@keyframes cometaHalleyPassando {
+  0% {
+    transform: translateX(-30vw);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateX(130vw);
+    opacity: 0;
+  }
+}
+
+/* ===== COMETA HALLEY COMO UM RASTRO ÚNICO ===== */
+.cometa-halley {
+  position: absolute;
+  top: 52%; /* altura do sol — ajuste se quiser */
+  left: -200px;
+  width: 180px;
+  height: 6px;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.6) 60%, rgba(255,255,255,0.9) 100%);
+  filter: blur(4px);
+  border-radius: 10px;
+  animation: cometaHalleyPassando 10s linear forwards;
+  z-index: 6;
+  pointer-events: none;
+}
+/* ================== PLANETAS E LUA ================== */
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbit var(--duration, 10s) linear infinite;
+}
+
+.moon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  margin-top: -3px;
+  background: lightgray;
+  border-radius: 50%;
+  animation: moonOrbit 2s linear infinite;
+}
+
+@keyframes moonOrbit {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+/* ================== BURACO NEGRO ================== */
+.blackhole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 20%, #222 40%, transparent 60%);
+  box-shadow: 0 0 60px #000;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.event-horizon {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.05);
+  animation: spin 4s linear infinite;
+  box-shadow: 0 0 30px rgba(255,255,255,0.1);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
