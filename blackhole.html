@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <head>
-<title>Sistema Solar com buracos negros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistema Solar com Som</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
- </head>
+  <!-- Seu <style> pode continuar aqui -->
+</head>
 <body>
     <audio id="bg-audio" src="som-fundo.mp3" loop></audio>
 <audio id="click-sound" src="click.mp3"></audio>
@@ -123,28 +124,70 @@
   <div class="solar-system">
     <div class="sun"></div>
     <div id="halley" class="cometa-halley"></div>
-    <div class="orbit" style="width: 100px; height: 100px;"></div>
-    <div class="planet" style="width: 8px; height: 8px; background: #aaa; --distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp: 167°C"></div><div class="orbit" style="width: 140px; height: 140px;"></div>
-<div class="planet" style="width: 10px; height: 10px; background: #ffcc66; --distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km\nTemp: 464°C"></div>
+    <!-- SOL -->
+  
 
-<div class="orbit" style="width: 180px; height: 180px;"></div>
+  <!-- MERCÚRIO -->
+  <div class="orbit" style="width: 100px; height: 100px;"></div>
+  <div class="planet" style="--distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp média: 167 °C\nDistância do Sol: 57,9 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" style="width: 8px; height: 8px; border-radius: 50%;">
+  </div>
+
+  <!-- VÊNUS -->
+  <div class="orbit" style="width: 140px; height: 140px;"></div>
+  <div class="planet" style="--distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km\nTemp média: 464 °C\nDistância do Sol: 108 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" style="width: 10px; height: 10px; border-radius: 50%;">
+  </div>
+
+  <!-- TERRA + LUA -->
+  <div class="orbit" style="width: 180px; height: 180px;"></div>
     <div class="planet" style="width: 16px; height: 16px; background: transparent; --distance: 90px; animation-duration: 10s;" data-info="Terra 🌍\nDiâmetro: 12.742 km\nTemp: 15°C">
       🌍<div class="moon"></div>
     </div>
 
-<div class="orbit" style="width: 240px; height: 240px;"></div>
-<div class="planet" style="width: 14px; height: 14px; background: transparent; --distance: 120px; animation-duration: 13s;" data-info="Marte 🔴\nDiâmetro: 6.779 km\nTemp: -60°C">🔴</div>
+  <!-- MARTE -->
+  <div class="orbit" style="width: 240px; height: 240px;"></div>
+  <div class="planet" style="--distance: 120px; animation-duration: 13s;" data-info="Marte 🔴\nDiâmetro: 6.779 km\nTemp média: -60 °C\nDistância do Sol: 227,9 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg" style="width: 14px; height: 14px; border-radius: 50%;">
+  </div>
 
-<div class="orbit" style="width: 340px; height: 340px;"></div>
-<div class="planet" style="width: 20px; height: 20px; background: #f90; --distance: 170px; animation-duration: 20s;" data-info="Júpiter\nDiâmetro: 139.820 km\nTemp: -110°C"></div>
+  <!-- JÚPITER -->
+  <div class="orbit" style="width: 340px; height: 340px;"></div>
+  <div class="planet" style="--distance: 170px; animation-duration: 20s;" data-info="Júpiter\nDiâmetro: 139.820 km\nTemp média: -110 °C\nDistância do Sol: 778 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg" style="width: 20px; height: 20px; border-radius: 50%;">
+  </div>
 
-<div class="orbit" style="width: 440px; height: 440px;"></div>
-    <div class="planet" style="width: 18px; height: 18px; background: transparent; --distance: 220px; animation-duration: 25s;" data-info="Saturno 🪐\nDiâmetro: 116.460 km\nTemp: -140°C">🪐</div>
-    <div class="orbit" style="width: 520px; height: 520px;"></div>
-<div class="planet" style="width: 14px; height: 14px; background: #0ff; --distance: 260px; animation-duration: 30s;" data-info="Urano\nDiâmetro: 50.724 km\nTemp: -195°C"></div>
+  <!-- SATURNO + ANÉIS -->
+  <div class="orbit" style="width: 440px; height: 440px;"></div>
+  <div class="planet" style="--distance: 220px; animation-duration: 25s;" data-info="Saturno 🪐\nDiâmetro: 116.460 km\nTemp média: -140 °C\nDistância do Sol: 1.433 mi km">
+    <div style="position: relative; width: 18px; height: 18px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg" style="width: 100%; height: 100%; border-radius: 50%;">
+      <div class="ring" style="
+        position: absolute;
+        top: 3px;
+        left: -6px;
+        width: 30px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        transform: rotate(25deg);
+        z-index: -1;
+      "></div>
+    </div>
+  </div>
 
-<div class="orbit" style="width: 600px; height: 600px;"></div>
-<div class="planet" style="width: 14px; height: 14px; background: #00f; --distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp: -200°C"></div>
+  <!-- URANO -->
+  <div class="orbit" style="width: 520px; height: 520px;"></div>
+  <div class="planet" style="--distance: 260px; animation-duration: 30s;" data-info="Urano\nDiâmetro: 50.724 km\nTemp média: -195 °C\nDistância do Sol: 2.872 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg" style="width: 14px; height: 14px; border-radius: 50%;">
+  </div>
+
+  <!-- NETUNO -->
+  <div class="orbit" style="width: 600px; height: 600px;"></div>
+  <div class="planet" style="--distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp média: -200 °C\nDistância do Sol: 4.495 mi km">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg" style="width: 14px; height: 14px; border-radius: 50%;">
+  </div>
+</div>
 
    <script src="galaxias.js"></script>  
    <script>
