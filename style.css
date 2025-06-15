@@ -1,4 +1,3 @@
-/* ================== ESTRELAS ================== */
 .star {
   position: absolute;
   width: 2px;
@@ -26,7 +25,6 @@
   50% { opacity: 0.3; }
 }
 
-/* ================== METEOROS ================== */
 .meteor {
   position: absolute;
   width: 60px;
@@ -51,7 +49,6 @@
   }
 }
 
-/* ===== ANIMAÇÃO HORIZONTAL DO COMETA HALLEY ===== */
 @keyframes cometaHalleyPassando {
   0% {
     transform: translateX(-30vw);
@@ -69,7 +66,6 @@
   }
 }
 
-/* ===== COMETA HALLEY COMO UM RASTRO ÚNICO ===== */
 .cometa-halley {
   position: absolute;
   top: 52%; /* altura do sol — ajuste se quiser */
@@ -83,7 +79,6 @@
   z-index: 6;
   pointer-events: none;
 }
-/* ================== PLANETAS E LUA ================== */
 .planet {
   position: absolute;
   top: 50%;
@@ -114,7 +109,6 @@
   }
 }
 
-/* ================== BURACO NEGRO ================== */
 .blackhole {
   position: absolute;
   top: 50%;
