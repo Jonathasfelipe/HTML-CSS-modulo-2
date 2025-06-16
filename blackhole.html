@@ -8,8 +8,7 @@
   <!-- Seu <style> pode continuar aqui -->
 </head>
 <body>
-    <audio id="bg-audio" src="som-fundo.mp3" loop></audio>
-<audio id="click-sound" src="click.mp3"></audio>
+    
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -120,14 +119,16 @@
 </head>
 <body>
     
-   <canvas id="galaxyCanvas"></canvas>  <div class="galaxy" id="galaxy"></div>
+   <canvas id="galaxyCanvas"></canvas>  <div class="galaxy" id="galaxy"></div>      
+<div id="galaxy">      
+  <div id="halley" class="cometa-halley"></div>      
+</div>    <div class="solar-system">      
+  <div class="sun"></div>      
+  <div id="halley" class="cometa-halley"></div>      
   <div class="solar-system">
-    <div class="sun"></div>
-    <div id="halley" class="cometa-halley"></div>
-    <!-- SOL -->
-  
-
-  <!-- MERCÚRIO -->
+      <div class="asteroid">
+  <div class="asteroid-belt"></div>
+<!-- MERCÚRIO -->
   <div class="orbit" style="width: 100px; height: 100px;"></div>
   <div class="planet" style="--distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp média: 167 °C\nDistância do Sol: 57,9 mi km">
     <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg" style="width: 8px; height: 8px; border-radius: 50%;">
@@ -188,41 +189,38 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg" style="width: 14px; height: 14px; border-radius: 50%;">
   </div>
 </div>
+</div>    <!-- Sons -->    <audio id="bg-audio" src="som-fundo.mp3" loop></audio>  
+<audio id="click-sound" src="click.mp3"></audio>  <script src="galaxias.js"></script>    <script>      const galaxy = document.getElementById('galaxy');
+for (let i = 0; i < 20; i++) {
+const star = document.createElement('div');
+star.classList.add('star');
+star.style.top = Math.random() * 100 + 'vh';
+star.style.left = Math.random() * 100 + 'vw';
+galaxy.appendChild(star);
+}
 
-   <script src="galaxias.js"></script>  
-   <script>
-    const galaxy = document.getElementById('galaxy');
-    for (let i = 0; i < 20; i++) {
-      const star = document.createElement('div');
-      star.classList.add('star');
-      star.style.top = Math.random() * 100 + 'vh';
-      star.style.left = Math.random() * 100 + 'vw';
-      galaxy.appendChild(star);
-    }
+function spawnShootingStar() {
+const shootingStar = document.createElement('div');
+shootingStar.classList.add('shooting-star');
+shootingStar.style.top = Math.random() * 80 + 'vh';
+shootingStar.style.left = Math.random() * 80 + 'vw';
+galaxy.appendChild(shootingStar);
+setTimeout(() => shootingStar.remove(), 1500);
+}
+setInterval(spawnShootingStar, 8000);
 
-    function spawnShootingStar() {
-      const shootingStar = document.createElement('div');
-      shootingStar.classList.add('shooting-star');
-      shootingStar.style.top = Math.random() * 80 + 'vh';
-      shootingStar.style.left = Math.random() * 80 + 'vw';
-      galaxy.appendChild(shootingStar);
-      setTimeout(() => shootingStar.remove(), 1500);
-    }
-    setInterval(spawnShootingStar, 8000);
+const bgAudio = document.getElementById('bg-audio');
+document.addEventListener("click", () => {
+if (bgAudio.paused) bgAudio.play().catch(() => {});
+});
 
-    const bgAudio = document.getElementById('bg-audio');
-    document.addEventListener("click", () => {
-      if (bgAudio.paused) bgAudio.play().catch(() => {});
-    });
+const clickSound = document.getElementById("click-sound");
+document.querySelectorAll(".planet").forEach(p => {
+p.addEventListener("mouseenter", () => {
+clickSound.currentTime = 0;
+clickSound.play();
+});
+});
+</script>    </body>
 
-    const clickSound = document.getElementById("click-sound");
-    document.querySelectorAll(".planet").forEach(p => {
-      p.addEventListener("mouseenter", () => {
-        clickSound.currentTime = 0;
-        clickSound.play();
-      });
-    });
-  </script>
-  <script src="script.js"></script>
-  </body>
 </html>
