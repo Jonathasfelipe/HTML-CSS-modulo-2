@@ -1,110 +1,94 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<!DOCTYPE html><html lang="pt-BR"><head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>eBook - Conhecimentos de HTML5 e CSS3</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1 - Introdução ao HTML5, CSS3 e JavaScript</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
+    }body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+  color: #333;
+  padding: 20px;
+  overflow-y: auto;
+}.container { max-width: 800px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(to bottom, #f8f8f8, #e0e0e0);
-      color: #333;
-      padding: 20px;
-      line-height: 1.6;
-    }
+h1, h2 { margin-bottom: 15px; color: #222; }
 
-    .ebook-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
+p { margin-bottom: 15px; line-height: 1.6; }
 
-    h1, h2, h3 {
-      margin-bottom: 15px;
-      color: #222;
-    }
+pre { background: #eee; padding: 10px; border-radius: 5px; overflow-x: auto; margin-bottom: 15px; }
 
-    p {
-      margin-bottom: 15px;
-    }
+nav { margin-top: 30px; text-align: center; }
 
-    img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin: 15px 0;
-    }
+nav a { text-decoration: none; background: #333; color: #fff; padding: 10px 15px; border-radius: 5px; margin: 0 5px; display: inline-block; }
 
-    .agradecimentos {
-      background: #333;
-      color: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      margin-top: 30px;
-    }
+nav a:hover { background: #555; }
 
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
+.typewriter { font-family: 'Courier New', Courier, monospace; font-size: 1rem; white-space: pre-wrap; line-height: 1.5; user-select: none; margin-top: 30px; }
 
-      .ebook-container {
-        padding: 15px;
-      }
-    }
   </style>
 </head>
-
 <body>
+  <div class="container">
+    <h1>1 - Introdução ao HTML5, CSS3 e JavaScript</h1><h2>Teoria</h2>
+<p>Nesta primeira página, daremos início à jornada de desenvolvimento web aprendendo três linguagens fundamentais:</p>
+<ul>
+  <li><strong>HTML5</strong>: responsável pela estrutura do conteúdo da página, como textos, imagens e links.</li>
+  <li><strong>CSS3</strong>: encarregado da aparência e do estilo visual, como cores, fontes e posicionamento.</li>
+  <li><strong>JavaScript</strong>: linguagem que dá vida às páginas, adicionando interatividade, lógica e animações dinâmicas.</li>
+</ul><p>Juntas, essas linguagens formam a base do desenvolvimento de sites modernos. Nesta etapa, vamos focar nos fundamentos do HTML, enquanto já preparamos o visual com CSS e começamos a integrar pequenos scripts com JavaScript.</p><p>Veja a seguir um exemplo básico de estrutura:</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+<html lang="pt-BR">
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Minha Página&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Bem-vindo!&lt;/h1&gt;
+    &lt;p&gt;Esta é minha primeira página usando HTML5.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2>Prática Aplicada</h2>
+<p>Abaixo, você vê o resultado aplicado do código acima:</p>
+<h1>Bem-vindo ao meu portfólio!</h1>
+<p>Esta é uma demonstração prática do que aprendemos sobre HTML5, CSS3 e a introdução ao JavaScript.</p><div class="typewriter" id="typewriter"></div><nav>
+  <a href="index2.html">Próxima Página &rarr;</a>
+</nav>  </div>  <script>
+    const text = `Aqui está um resumo dos projetos incríveis que construímos juntos até agora:\n
+1. Na primeira página, criamos a introdução do nosso eBook, explicando o que é HTML, CSS e JavaScript e como eles funcionam juntos para criar páginas web completas.\n
+2. Na segunda, exploramos fontes e interatividade, aprendendo a trocar estilos de texto dinamicamente para deixar tudo mais vivo.\n
+3. Na terceira página, demos os primeiros passos com textos automáticos — aqueles textos filosóficos que aparecem como se fossem escritos por uma máquina.\n
+4. A quarta página é pura diversão: reunimos todos os games 2D que desenvolvemos, incluindo quebra-cabeça, Tetris, tênis neon, runner e blocos invasores.\n
+5. Na quinta, experimentamos com formas geométricas que mudam automaticamente, criando animações visuais legais e dinâmicas.\n
+6. A sexta página conecta você à música, com links para playlists do Spotify que selecionamos para acompanhar a programação.\n
+7. Na sétima, temos um efeito Matrix, com aquela chuva de caracteres verdes que todo mundo ama.\n
+8. E, para fechar essa etapa, a oitava página traz um calendário funcional, mostrando a hora exata para manter seu dia organizado.\n
+\nAgora estamos trabalhando na nossa **nona página**, o projeto mais ousado e impressionante até agora:\nUm sistema solar interativo em HTML, CSS e JavaScript, com zoom do mouse, órbitas animadas, informações dinâmicas sobre os planetas, eventos astronômicos, efeitos visuais realistas, som cósmico e um HUD personalizado com datas, cometas, e até a sua data de aniversário.\n\nCada página representa um nível conquistado no seu aprendizado — do básico ao avançado — com foco na criatividade, na prática e na beleza do desenvolvimento web.\n\nParabéns por ter chegado até aqui. Vamos continuar explorando o universo da programação juntos!\n`;const container = document.getElementById('typewriter');
+let index = 0;
 
-  <div class="ebook-container">
-    <h1>eBook de Estudos: HTML5 e CSS3</h1>
-    <p>Este material foi desenvolvido por mim, Jonatas Felipe, com base nos conhecimentos adquiridos até o Módulo 2 do curso de HTML5 e CSS3 do Curso em Vídeo, com apoio da Inteligência Artificial, ChatGPT.</p>
+const audio = new Audio('https://www.soundjay.com/mechanical/typewriter-key-1.mp3');
 
-    <h2>Capítulo 1: Introdução ao HTML5</h2>
-    <p>Nesse capítulo aprendemos as bases do HTML5, estrutura básica de um documento, tags principais como: <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>, além de tags de texto como <code>&lt;h1&gt;</code> até <code>&lt;h6&gt;</code>, parágrafos e links.</p>
-    <img"Imgchatgpt.png"a">
+function playSound() {
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
 
-    <h2>Capítulo 2: Estruturando Conteúdo</h2>
-    <p>Aprofundamos o uso de listas ordenadas e não ordenadas, tabelas e elementos semânticos, melhorando a estrutura e acessibilidade das páginas.</p>
-    <img src="https://via.placeholder.com/600x300.png?text=Estilo+Cartoon+-+Estrutura" alt="Imagem ilustrativa estilo cartoon estrutura">
+function type() {
+  if (index < text.length) {
+    container.textContent += text.charAt(index);
+    if (/[a-zA-Z0-9,.!?]/.test(text.charAt(index))) {
+      playSound();
+    }
+    index++;
+    setTimeout(type, 40);
+  }
+}
 
-    <h2>Capítulo 3: Introdução ao CSS3</h2>
-    <p>Conhecemos o CSS3, suas formas de aplicação (inline, interna e externa) e principais seletores, além das propriedades essenciais para estilização: cores, fontes, tamanhos e espaçamentos.</p>
-    <img src="https://via.placeholder.com/600x300.png?text=Minimalista+-+CSS3" alt="Imagem ilustrativa minimalista CSS3">
+type();
 
-    <h2>Capítulo 4: Layout Responsivo</h2>
-    <p>Exploramos conceitos de responsividade utilizando medidas relativas como <code>em</code>, <code>rem</code> e <code>%</code>, além do uso da tag <code>&lt;meta viewport&gt;</code>.</p>
-    <img src="https://via.placeholder.com/600x300.png?text=Anime+-+Responsividade" alt="Imagem ilustrativa anime responsividade">
+</script></body>
 
-    <h2>Capítulo 5: Fontes e Estilização</h2>
-    <p>Aprendemos a manipular fontes, utilizando famílias com e sem serifa, tamanhos com medidas absolutas e relativas, além do uso de <code>@font-face</code> para incorporar fontes personalizadas.</p>
-    <img src="https://via.placeholder.com/600x300.png?text=Cartoon+-+Fontes" alt="Imagem ilustrativa cartoon fontes">
-
-    <div class="agradecimentos">
-      <h3>Agradecimentos</h3>
-      <p>Este material de estudo foi feito por mim, Jonatas Felipe, com a ajuda da Inteligência Artificial, ChatGPT, e inspirado pelo Curso em Vídeo. Agradeço ao professor Gustavo Guanabara pelo excelente conteúdo.</p>
-    </div>
-  </div>
-  </footer>
-
-   <a href="index.html">1</a>
-    <a href="index2.html">2</a>
-    <a href="index3.html">3</a>
-    <a href="index4.html">4</a>
-    <a href="index5.html">5</a>
-    <a href="index6.html">6</a>
-    <a href="index8.html">7</a>
-    <a href="index9.html">8</a>
-    <a href="segundosistemasolar.html">9</a>
-    <a href="datament.html">10</a>
+</html>
