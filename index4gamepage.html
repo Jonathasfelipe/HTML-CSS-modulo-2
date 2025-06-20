@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fechamento - Game Over</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  background: radial-gradient(ellipse at top, #111 0%, #000 100%);
+  color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #FF0033;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-bottom: 25px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+li {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.quote {
+  font-style: italic;
+  color: #ccc;
+  margin: 30px 0;
+}
+
+a {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #FFD700;
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+a:hover {
+  background: #e6c200;
+}
+
+.final-text {
+  margin-top: 40px;
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 2s ease-in;
+}
+
+  </style>
+</head>
+<body>
+  <h1>GAMEOVER🎮</h1>
+  <p>
+    Esta jornada de aprendizado só foi possível graças ao incrível trabalho do professor <strong>Gustavo Guanabara</strong> e sua dedicação com o <strong>Curso em Vídeo</strong>. Cada aula trouxe clareza, inspiração e vontade de continuar aprendendo.
+  </p>  <h2>Conhecimentos Aplicados:</h2>
+  <ul>
+    <li>📄 HTML5 – estrutura de páginas</li>
+    <li>🎨 CSS3 – design, cores e responsividade</li>
+    <li>⚙️ JavaScript – interatividade e lógica</li>
+  </ul>  <p class="quote">
+    “Aprender programação é como aprender uma nova linguagem. Com prática, ela se torna parte de você.” – Gustavo Guanabara
+  </p><a href="https://www.cursoemvideo.com" target="_blank">🌐 Visitar Curso em Vídeo</a>
+
+  <p class="final-text" id="finalText">E isso é só o começo... 🚀</p>  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('finalText').style.opacity = 1;
+      }, 3000);
+    });
+  </script></body>
+</html>
