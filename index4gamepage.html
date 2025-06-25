@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fechamento - Game Over</title>
+<!DOCTYPE html>    
+<html lang="pt-BR">           
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>     
+  <title>Sistema Solar</title>      
+  <link rel="stylesheet" href="style.css">      
+  <script src="script.js" defer></script>
+  <title>Fechamento - Play Game</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');* {
   margin: 0;
@@ -12,7 +15,12 @@
 
 body {
   font-family: 'Press Start 2P', monospace;
-  background: radial-gradient(ellipse at top, #111 0%, #000 100%);
+  background: 
+    url('file_00000000909c61f99dcedf17e1b51808.png') no-repeat right center;
+  background-size: cover, auto 100%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: top, right center;
   color: #f0f0f0;
   display: flex;
   flex-direction: column;
@@ -26,6 +34,11 @@ body {
 h1 {
   font-size: 2.5rem;
   color: #FF0033;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: red;
   margin-bottom: 20px;
 }
 
@@ -75,14 +88,23 @@ a:hover {
   opacity: 0;
   transition: opacity 2s ease-in;
 }
-
-  </style>
+ </style>
 </head>
 <body>
-  <h1>GAMEOVER🎮</h1>
-  <p>
-    Esta jornada de aprendizado só foi possível graças ao incrível trabalho do professor <strong>Gustavo Guanabara</strong> e sua dedicação com o <strong>Curso em Vídeo</strong>. Cada aula trouxe clareza, inspiração e vontade de continuar aprendendo.
-  </p>  <h2>Conhecimentos Aplicados:</h2>
+  <h1>Play game🎮</h1>
+  
+  <br>
+    <div class="nav-column">
+      <a class="nav-link" href="tenis.html">Tênis neon</a>
+      <a class="nav-link" href="Tetris.html">Tetris</a>
+      <a class="nav-link" href="Runner.html">Runner cadeirante</a>
+      <a class="nav-link" href="Piano.html">Piano score</a>
+      <a class="nav-link" href="Spaceinvaders.html">Blocos invasores</a>
+    </div>
+  <br>
+    
+  
+  <h2>Conhecimentos Aplicados:</h2>
   <ul>
     <li>📄 HTML5 – estrutura de páginas</li>
     <li>🎨 CSS3 – design, cores e responsividade</li>
