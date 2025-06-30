@@ -126,6 +126,21 @@
       border: 2px solid #ff0;
       display: none;
     }
+    
+    #weapon-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #0ff;
+      font-size: 16px;
+      text-shadow: 0 0 5px #0ff;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      border: 2px solid #0ff;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -142,10 +157,13 @@
     </div>
     <div id="controls">
       TOQUE E ARRASTE PARA MOVER<br>
-      TIRO AUTOMÁTICO ATIVADO
+      ARMAS: <span id="weaponName">BÁSICA</span>
     </div>
     <div id="powerup-indicator" class="powerup-indicator">
       POWER-UP ATIVO!
+    </div>
+    <div id="weapon-indicator" class="powerup-indicator">
+      NOVA ARMA!
     </div>
     <div id="gameOver">
       GAME OVER<br>
@@ -159,15 +177,16 @@
   <script>
     // Configurações do jogo
     const config = {
-      playerSpeed: 8,
+      playerSpeed: 10,
       bulletSpeed: 12,
       enemyBulletSpeed: 6,
       enemySpeed: 1.5,
       spawnRate: 1500,
-      maxEnemies: 15,
+      maxEnemies: 20,
       autoShootInterval: 300,
       powerUpDuration: 10000,
-      waveEnemyCount: 10
+      waveEnemyCount: 15,
+      weaponChangeInterval: 30000
     };
     
     // Estado do jogo
@@ -196,13 +215,17 @@
       lastSpawn: 0,
       lastShot: 0,
       touchX: null,
+      touchY: null,
       canvasWidth: 0,
       canvasHeight: 0,
       powerUpActive: false,
       powerUpType: null,
       powerUpEndTime: 0,
       gameLoopRunning: false,
-      stars: []
+      stars: [],
+      weapons: ['basic', 'spread', 'laser'],
+      currentWeapon: 'basic',
+      lastWeaponChange: 0
     };
     
     // Elementos do DOM
@@ -217,6 +240,8 @@
     const finalScoreElement = document.getElementById('finalScore');
     const restartBtn = document.getElementById('restartBtn');
     const powerUpIndicator = document.getElementById('powerup-indicator');
+    const weaponIndicator = document.getElementById('weapon-indicator');
+    const weaponNameElement = document.getElementById('weaponName');
 
     // Sprites em pixel art melhorados
     const sprites = {
@@ -224,12 +249,18 @@
       enemy1: createEnemySprite('#ff0000', 'crab'),
       enemy2: createEnemySprite('#00ff00', 'squid'),
       enemy3: createEnemySprite('#ffff00', 'mothership'),
+      enemy4: createEnemySprite('#ff7700', 'zigzag'),
+      enemy5: createEnemySprite('#aa00ff', 'diver'),
+      enemy6: createEnemySprite('#00ffff', 'orb'),
       boss: createBossSprite(),
       bullet: createBulletSprite('#00ffff'),
       enemyBullet: createBulletSprite('#ff00ff'),
+      enemyBullet2: createBulletSprite('#ff7700'),
+      enemyBullet3: createBulletSprite('#00ff77'),
       powerUpSpeed: createPowerUpSprite('#00ff00'),
       powerUpRapidFire: createPowerUpSprite('#ff0000'),
-      powerUpShield: createPowerUpSprite('#0000ff')
+      powerUpShield: createPowerUpSprite('#0000ff'),
+      powerUpWeapon: createPowerUpSprite('#ff00ff')
     };
 
     function createPlayerSprite() {
@@ -350,6 +381,77 @@
             ctx.fillRect(10 + i * 6, 20, 2, 8);
           }
           break;
+          
+        case 'zigzag':
+          // Corpo
+          ctx.beginPath();
+          ctx.arc(16, 16, 12, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Asas
+          ctx.fillStyle = darkenColor(color, 0.3);
+          ctx.beginPath();
+          ctx.ellipse(5, 16, 8, 4, 0, 0, Math.PI * 2);
+          ctx.ellipse(27, 16, 8, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Olho
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(16, 12, 6, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.fillStyle = '#000000';
+          ctx.beginPath();
+          ctx.arc(16, 12, 3, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+          
+        case 'diver':
+          // Corpo
+          ctx.beginPath();
+          ctx.ellipse(16, 20, 8, 12, 0, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Nadadeiras
+          ctx.fillStyle = darkenColor(color, 0.3);
+          ctx.beginPath();
+          ctx.moveTo(16, 8);
+          ctx.lineTo(4, 16);
+          ctx.lineTo(16, 24);
+          ctx.lineTo(28, 16);
+          ctx.closePath();
+          ctx.fill();
+          
+          // Olho
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(16, 16, 4, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+          
+        case 'orb':
+          // Corpo
+          ctx.beginPath();
+          ctx.arc(16, 16, 14, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Anéis
+          ctx.strokeStyle = darkenColor(color, 0.3);
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(16, 16, 10, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(16, 16, 6, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          // Núcleo
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(16, 16, 3, 0, Math.PI * 2);
+          ctx.fill();
+          break;
       }
       
       return canvas;
@@ -376,6 +478,12 @@
       
       ctx.fillStyle = '#ff0000';
       ctx.fillRect(28, 32, 8, 4);
+      
+      // Canhões adicionais
+      ctx.fillStyle = '#ff5500';
+      ctx.fillRect(10, 48, 4, 8);
+      ctx.fillRect(50, 48, 4, 8);
+      ctx.fillRect(28, 10, 8, 4);
       
       return canvas;
     }
@@ -465,7 +573,7 @@
     }
 
     function spawnPowerUp(x, y) {
-      const types = ['speed', 'rapidFire', 'shield'];
+      const types = ['speed', 'rapidFire', 'shield', 'weapon'];
       const type = types[Math.floor(Math.random() * types.length)];
       
       state.powerUps.push({
@@ -533,7 +641,7 @@
       // Ajusta a posição do jogador
       if (state.player) {
         state.player.x = Math.min(state.player.x, canvas.width - state.player.width);
-        state.player.y = canvas.height - state.player.height - 20;
+        state.player.y = Math.min(state.player.y, canvas.height - state.player.height);
       }
       
       // Recria as estrelas
@@ -542,38 +650,61 @@
 
     function handleTouchStart(e) {
       e.preventDefault();
-      state.touchX = e.touches[0].clientX;
+      const touch = e.touches[0];
+      state.touchX = touch.clientX;
+      state.touchY = touch.clientY;
     }
 
     function handleTouchMove(e) {
       e.preventDefault();
-      if (!state.touchX) return;
+      if (!state.touchX || !state.touchY) return;
       
-      const touchX = e.touches[0].clientX;
-      state.player.x = touchX - state.player.width / 2;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - state.touchX;
+      const deltaY = touch.clientY - state.touchY;
+      
+      state.player.x += deltaX;
+      state.player.y += deltaY;
       
       // Limita o jogador dentro da tela
       state.player.x = Math.max(0, Math.min(state.canvasWidth - state.player.width, state.player.x));
+      state.player.y = Math.max(0, Math.min(state.canvasHeight - state.player.height, state.player.y));
+      
+      state.touchX = touch.clientX;
+      state.touchY = touch.clientY;
     }
 
     function handleTouchEnd(e) {
       e.preventDefault();
       state.touchX = null;
+      state.touchY = null;
     }
 
     function handleMouseDown(e) {
       state.touchX = e.clientX;
+      state.touchY = e.clientY;
     }
 
     function handleMouseMove(e) {
-      if (!state.touchX) return;
+      if (!state.touchX || !state.touchY) return;
       
-      state.player.x = e.clientX - state.player.width / 2;
+      const deltaX = e.clientX - state.touchX;
+      const deltaY = e.clientY - state.touchY;
+      
+      state.player.x += deltaX;
+      state.player.y += deltaY;
+      
+      // Limita o jogador dentro da tela
       state.player.x = Math.max(0, Math.min(state.canvasWidth - state.player.width, state.player.x));
+      state.player.y = Math.max(0, Math.min(state.canvasHeight - state.player.height, state.player.y));
+      
+      state.touchX = e.clientX;
+      state.touchY = e.clientY;
     }
 
     function handleMouseUp(e) {
       state.touchX = null;
+      state.touchY = null;
     }
 
     function update(deltaTime) {
@@ -585,6 +716,12 @@
       // Verifica power-ups ativos
       if (state.powerUpActive && Date.now() > state.powerUpEndTime) {
         deactivatePowerUp();
+      }
+      
+      // Troca de arma automática
+      if (Date.now() - state.lastWeaponChange > config.weaponChangeInterval) {
+        cycleWeapon();
+        state.lastWeaponChange = Date.now();
       }
       
       // Tiro automático
@@ -624,8 +761,8 @@
         nextWave();
       }
       
-      // Aumenta o nível a cada 500 pontos
-      const newLevel = Math.floor(state.score / 500) + 1;
+      // Aumenta o nível a cada 1000 pontos
+      const newLevel = Math.floor(state.score / 1000) + 1;
       if (newLevel > state.level) {
         state.level = newLevel;
         levelElement.textContent = state.level;
@@ -644,17 +781,28 @@
 
     function updatePlayerBullets() {
       for (let i = state.bullets.length - 1; i >= 0; i--) {
-        state.bullets[i].y -= state.bullets[i].speed;
+        const bullet = state.bullets[i];
+        
+        // Movimento baseado no tipo de bala
+        if (bullet.type === 'laser') {
+          bullet.y -= bullet.speed * 1.5;
+          bullet.height += 5;
+        } else if (bullet.type === 'spread') {
+          bullet.x += Math.sin(Date.now() * 0.005 + i) * 2;
+          bullet.y -= bullet.speed;
+        } else {
+          bullet.y -= bullet.speed;
+        }
         
         // Remove balas que saíram da tela
-        if (state.bullets[i].y < -10) {
+        if (bullet.y < -50) {
           state.bullets.splice(i, 1);
           continue;
         }
         
         // Verifica colisão com inimigos
         for (let j = state.enemies.length - 1; j >= 0; j--) {
-          if (checkCollision(state.bullets[i], state.enemies[j])) {
+          if (checkCollision(bullet, state.enemies[j])) {
             const points = state.enemies[j].type === 'boss' ? 100 : 10 * state.level;
             state.score += points;
             scoreElement.textContent = state.score;
@@ -678,16 +826,33 @@
 
     function updateEnemyBullets() {
       for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
-        state.enemyBullets[i].y += state.enemyBullets[i].speed;
+        const bullet = state.enemyBullets[i];
+        
+        // Movimento baseado no tipo de bala
+        if (bullet.type === 'homing') {
+          // Movimento em direção ao jogador
+          const dx = state.player.x + state.player.width/2 - bullet.x;
+          const dy = state.player.y + state.player.height/2 - bullet.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          
+          bullet.x += (dx/dist) * bullet.speed;
+          bullet.y += (dy/dist) * bullet.speed;
+        } else if (bullet.type === 'spiral') {
+          // Movimento espiral
+          bullet.x += Math.sin(Date.now() * 0.005 + bullet.y * 0.01) * 3;
+          bullet.y += bullet.speed;
+        } else {
+          bullet.y += bullet.speed;
+        }
         
         // Remove balas que saíram da tela
-        if (state.enemyBullets[i].y > state.canvasHeight) {
+        if (bullet.y > state.canvasHeight + 50) {
           state.enemyBullets.splice(i, 1);
           continue;
         }
         
         // Verifica colisão com o jogador
-        if (checkCollision(state.enemyBullets[i], state.player)) {
+        if (checkCollision(bullet, state.player)) {
           if (state.powerUpType !== 'shield') {
             state.health -= 20;
             updateHealthBar();
@@ -713,23 +878,68 @@
     function updateEnemies() {
       for (let i = state.enemies.length - 1; i >= 0; i--) {
         const enemy = state.enemies[i];
-        enemy.y += enemy.speed;
         
-        // Movimento lateral para alguns inimigos
-        if (enemy.type === 'squid') {
-          enemy.x += Math.sin(Date.now() * 0.005 + i) * 2;
+        // Movimento baseado no tipo de inimigo
+        switch(enemy.type) {
+          case 'enemy1': // Crab
+            enemy.y += enemy.speed;
+            break;
+          case 'enemy2': // Squid
+            enemy.y += enemy.speed * 0.8;
+            enemy.x += Math.sin(Date.now() * 0.005 + i) * 2;
+            break;
+          case 'enemy3': // Mothership
+            enemy.y += enemy.speed * 0.6;
+            break;
+          case 'enemy4': // Zigzag
+            enemy.y += enemy.speed * 0.7;
+            enemy.x += Math.sin(Date.now() * 0.005 + enemy.y * 0.1) * 3;
+            break;
+          case 'enemy5': // Diver
+            enemy.y += enemy.speed * 1.2;
+            enemy.x += Math.cos(Date.now() * 0.003 + i) * 4;
+            break;
+          case 'enemy6': // Orb
+            enemy.y += enemy.speed * 0.5;
+            enemy.x += Math.sin(Date.now() * 0.004 + enemy.y * 0.05) * 2;
+            break;
+          case 'boss':
+            enemy.y += enemy.speed * 0.4;
+            enemy.x += Math.sin(Date.now() * 0.002) * 2;
+            break;
         }
         
         // Remove inimigos que saíram da tela
-        if (enemy.y > state.canvasHeight) {
+        if (enemy.y > state.canvasHeight + 50) {
           state.enemies.splice(i, 1);
           continue;
         }
         
         // Disparo aleatório dos inimigos
-        const shootChance = enemy.type === 'boss' ? 0.02 : 0.005;
+        let shootChance = 0.005;
+        let bulletType = 'normal';
+        
+        switch(enemy.type) {
+          case 'enemy3': // Mothership
+            shootChance = 0.01;
+            bulletType = 'normal';
+            break;
+          case 'enemy5': // Diver
+            shootChance = 0.008;
+            bulletType = 'homing';
+            break;
+          case 'enemy6': // Orb
+            shootChance = 0.007;
+            bulletType = 'spiral';
+            break;
+          case 'boss':
+            shootChance = 0.02;
+            bulletType = Math.random() > 0.5 ? 'homing' : 'spiral';
+            break;
+        }
+        
         if (Math.random() < shootChance * state.level) {
-          shootEnemyBullet(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+          shootEnemyBullet(enemy.x + enemy.width / 2, enemy.y + enemy.height, bulletType);
         }
         
         // Verifica colisão com o jogador
@@ -771,7 +981,11 @@
         
         // Verifica colisão com o jogador
         if (checkCollision(powerUp, state.player)) {
-          activatePowerUp(powerUp.type);
+          if (powerUp.type === 'weapon') {
+            cycleWeapon();
+          } else {
+            activatePowerUp(powerUp.type);
+          }
           state.powerUps.splice(i, 1);
         }
       }
@@ -800,36 +1014,65 @@
     }
 
     function shootBullet() {
-      const bulletCount = state.powerUpType === 'rapidFire' ? 3 : 1;
-      
-      for (let i = 0; i < bulletCount; i++) {
-        const offsetX = bulletCount === 1 ? 0 : (i - 1) * 10;
-        state.bullets.push({
-          x: state.player.x + state.player.width / 2 - 3 + offsetX,
-          y: state.player.y,
-          width: 6,
-          height: 16,
-          speed: config.bulletSpeed
-        });
+      switch(state.currentWeapon) {
+        case 'basic':
+          // Tiro básico único
+          state.bullets.push({
+            x: state.player.x + state.player.width / 2 - 3,
+            y: state.player.y,
+            width: 6,
+            height: 16,
+            speed: config.bulletSpeed,
+            type: 'basic'
+          });
+          break;
+          
+        case 'spread':
+          // Tiro triplo em leque
+          for (let i = 0; i < 3; i++) {
+            const offsetX = (i - 1) * 8;
+            state.bullets.push({
+              x: state.player.x + state.player.width / 2 - 3 + offsetX,
+              y: state.player.y,
+              width: 6,
+              height: 16,
+              speed: config.bulletSpeed * 0.9,
+              type: 'spread'
+            });
+          }
+          break;
+          
+        case 'laser':
+          // Tiro laser poderoso
+          state.bullets.push({
+            x: state.player.x + state.player.width / 2 - 4,
+            y: state.player.y,
+            width: 8,
+            height: 32,
+            speed: config.bulletSpeed * 1.5,
+            type: 'laser'
+          });
+          break;
       }
     }
 
-    function shootEnemyBullet(x, y) {
+    function shootEnemyBullet(x, y, type = 'normal') {
       state.enemyBullets.push({
         x: x - 3,
         y: y,
         width: 6,
         height: 16,
-        speed: config.enemyBulletSpeed
+        speed: config.enemyBulletSpeed,
+        type: type
       });
     }
 
     function spawnEnemy() {
-      const types = ['enemy1', 'enemy2', 'enemy3'];
+      const types = ['enemy1', 'enemy2', 'enemy3', 'enemy4', 'enemy5', 'enemy6'];
       let type = types[Math.floor(Math.random() * types.length)];
       
       // Chance de spawn de boss a cada 5 waves
-      if (state.wave % 5 === 0 && Math.random() < 0.1) {
+      if (state.wave % 5 === 0 && Math.random() < 0.15) {
         type = 'boss';
       }
       
@@ -867,6 +1110,32 @@
       }
     }
 
+    function cycleWeapon() {
+      const currentIndex = state.weapons.indexOf(state.currentWeapon);
+      const nextIndex = (currentIndex + 1) % state.weapons.length;
+      state.currentWeapon = state.weapons[nextIndex];
+      
+      // Atualiza o nome da arma no HUD
+      switch(state.currentWeapon) {
+        case 'basic':
+          weaponNameElement.textContent = 'BÁSICA';
+          break;
+        case 'spread':
+          weaponNameElement.textContent = 'TRIPLO';
+          break;
+        case 'laser':
+          weaponNameElement.textContent = 'LASER';
+          break;
+      }
+      
+      // Mostra indicador de nova arma
+      weaponIndicator.textContent = 'NOVA ARMA: ' + weaponNameElement.textContent + '!';
+      weaponIndicator.style.display = 'block';
+      setTimeout(() => {
+        weaponIndicator.style.display = 'none';
+      }, 2000);
+    }
+
     function deactivatePowerUp() {
       state.powerUpActive = false;
       state.powerUpType = null;
@@ -879,8 +1148,11 @@
       state.enemiesKilledInWave = 0;
       waveElement.textContent = state.wave;
       
+      // Aumenta o número de inimigos necessários para a próxima wave
+      config.waveEnemyCount = Math.floor(15 + state.wave * 1.5);
+      
       // Bonus por completar a wave
-      state.score += 50 * state.wave;
+      state.score += 100 * state.wave;
       scoreElement.textContent = state.score;
       
       // Restaura um pouco de vida
@@ -924,19 +1196,39 @@
       
       // Desenha balas do jogador
       for (const bullet of state.bullets) {
-        ctx.drawImage(
-          sprites.bullet,
-          bullet.x,
-          bullet.y,
-          bullet.width,
-          bullet.height
-        );
+        let sprite = sprites.bullet;
+        
+        if (bullet.type === 'laser') {
+          // Laser tem aparência diferente
+          ctx.fillStyle = '#00ffff';
+          ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+          
+          // Efeito de brilho
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fillRect(bullet.x + 1, bullet.y, bullet.width - 2, bullet.height);
+        } else {
+          ctx.drawImage(
+            sprite,
+            bullet.x,
+            bullet.y,
+            bullet.width,
+            bullet.height
+          );
+        }
       }
       
       // Desenha balas dos inimigos
       for (const bullet of state.enemyBullets) {
+        let sprite = sprites.enemyBullet;
+        
+        if (bullet.type === 'homing') {
+          sprite = sprites.enemyBullet2;
+        } else if (bullet.type === 'spiral') {
+          sprite = sprites.enemyBullet3;
+        }
+        
         ctx.drawImage(
-          sprites.enemyBullet,
+          sprite,
           bullet.x,
           bullet.y,
           bullet.width,
@@ -960,8 +1252,14 @@
         ctx.save();
         ctx.translate(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2);
         ctx.rotate(powerUp.rotation);
+        
+        let spriteKey = 'powerUp' + powerUp.type.charAt(0).toUpperCase() + powerUp.type.slice(1);
+        if (powerUp.type === 'weapon') {
+          spriteKey = 'powerUpWeapon';
+        }
+        
         ctx.drawImage(
-          sprites['powerUp' + powerUp.type.charAt(0).toUpperCase() + powerUp.type.slice(1)],
+          sprites[spriteKey],
           -powerUp.width / 2,
           -powerUp.height / 2,
           powerUp.width,
@@ -1029,6 +1327,8 @@
       state.explosions = [];
       state.particles = [];
       state.enemiesKilledInWave = 0;
+      config.waveEnemyCount = 15;
+      state.currentWeapon = 'basic';
       
       deactivatePowerUp();
       
@@ -1036,9 +1336,11 @@
       livesElement.textContent = state.lives;
       levelElement.textContent = state.level;
       waveElement.textContent = state.wave;
+      weaponNameElement.textContent = 'BÁSICA';
       updateHealthBar();
       
       gameOverElement.style.display = 'none';
+      weaponIndicator.style.display = 'none';
       
       // Reposiciona o jogador
       state.player.x = canvas.width / 2 - state.player.width / 2;
