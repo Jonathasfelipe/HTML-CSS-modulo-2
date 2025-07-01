@@ -138,7 +138,7 @@
 
 <div id="choice" class="choice">
   <button class="btn-matrix" onclick="chooseRed()">PÍLULA VERMELHA - DESPERTAR</button>
-  <button class="btn-matrix" onclick="chooseBlue()">PÍLULA AZUL - ESQUECER</button>
+  <button class="btn-matrix" onclick="chooseBlue()">PÍLULA AZUL - VOLTAR AO SISTEMA</button>
 </div>
 
 <div id="finalMessage" class="message hidden">
@@ -155,7 +155,7 @@
   canvas.height = window.innerHeight;
 
   const letters = 'アカサタナハマヤラワガザダバパ01';
-  const fontSize = 12; // Fonte menor
+  const fontSize = 12;
   const columns = Math.floor(canvas.width / fontSize);
   const drops = Array(columns).fill(0);
 
@@ -180,13 +180,11 @@
     ctx.font = `bold ${fontSize}px 'MatrixCode', monospace`;
 
     for (let i = 0; i < drops.length; i++) {
-      // Caracteres japoneses apenas nas primeiras linhas
       const useJapanese = drops[i] < 5 && Math.random() > 0.7;
       const text = useJapanese ? 
         letters.charAt(Math.floor(Math.random() * 12)) :
         letters.charAt(Math.floor(Math.random() * 2) + 12);
       
-      // Efeito de brilho variável
       const brightness = Math.random() > 0.95 ? 1 : Math.random() * 0.5 + 0.3;
       ctx.fillStyle = `rgba(0, 255, 0, ${brightness})`;
       
@@ -216,28 +214,25 @@
     ctx.textAlign = 'left';
   }
 
-  // Sequência de mensagens com tempos ajustados
+  // Sequência de mensagens com tempos ajustados (primeira mensagem mais rápida)
   function showMessages() {
     const sequence = [
-      { id: 'message1', delay: 1000, duration: 4000 },
-      { id: 'message2', delay: 5500, duration: 8000 },
-      { id: 'message3', delay: 14000, duration: 5000 },
-      { id: 'message4', delay: 20000, duration: 5000 }
+      { id: 'message1', delay: 500, duration: 3500 },  // Mais rápido (500ms em vez de 1000ms)
+      { id: 'message2', delay: 4500, duration: 8000 }, // Ajuste proporcional
+      { id: 'message3', delay: 13000, duration: 5000 },
+      { id: 'message4', delay: 19000, duration: 5000 }
     ];
 
     sequence.forEach((msg, index) => {
-      // Mostrar mensagem
       setTimeout(() => {
         document.getElementById(msg.id).classList.remove('hidden');
         document.getElementById(msg.id).classList.add('active');
         
-        // Esconder mensagem após duração
         if (index < sequence.length - 1) {
           setTimeout(() => {
             document.getElementById(msg.id).classList.remove('active');
           }, msg.duration - 500);
         } else {
-          // Última mensagem - mostrar escolha
           setTimeout(() => {
             document.getElementById(msg.id).classList.remove('active');
             document.getElementById('choice').classList.add('active');
@@ -250,7 +245,7 @@
   function chooseRed() {
     document.getElementById('choice').classList.remove('active');
     document.getElementById('finalTitle').textContent = "VOCÊ ESCOLHEU A VERDADE";
-    document.getElementById('finalText').textContent = "Lembre-se: Tudo o que eu posso te oferecer é a verdade. Nada mais.";
+    document.getElementById('finalText').textContent = "Preparando para acordar...";
     document.getElementById('finalMessage').classList.remove('hidden');
     document.getElementById('finalMessage').classList.add('active');
     
@@ -259,14 +254,15 @@
     
     setTimeout(() => {
       clearInterval(intenseMatrix);
-      window.location.href = 'neo.html';
-    }, 5000);
+      // Recarrega a página (como "acordar de novo")
+      window.location.reload();
+    }, 3000);
   }
 
   function chooseBlue() {
     document.getElementById('choice').classList.remove('active');
-    document.getElementById('finalTitle').textContent = "VOLTANDO À MATRIX";
-    document.getElementById('finalText').textContent = "Você acordará em sua cama e acreditará no que quiser acreditar...";
+    document.getElementById('finalTitle').textContent = "VOLTANDO AO SISTEMA";
+    document.getElementById('finalText').textContent = "Redirecionando para a Matrix...";
     document.getElementById('finalMessage').classList.remove('hidden');
     document.getElementById('finalMessage').classList.add('active');
     
@@ -275,8 +271,9 @@
     
     setTimeout(() => {
       clearInterval(slowMatrix);
-      window.location.href = 'matrix.html';
-    }, 5000);
+      // Redireciona para o Google (como "voltar para a matrix")
+      window.location.href = 'https://www.google.com';
+    }, 3000);
   }
 
   // Iniciar efeitos
@@ -287,15 +284,6 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
-
-  // Efeito sonoro opcional (descomente para ativar)
-  /*
-  document.addEventListener('click', () => {
-    const audio = new Audio('matrix-sound.mp3');
-    audio.volume = 0.3;
-    audio.play();
-  });
-  */
 </script>
 
 </body>
