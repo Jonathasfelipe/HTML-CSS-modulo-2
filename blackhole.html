@@ -190,6 +190,39 @@
   <button class="menu-btn" id="menu-toggle">☰ Menu</button>
   <div class="hud-time" id="current-time">--:--:--</div>
 </div>
+<div class="hud-time" id="current-time">--:--:--</div>
+
+<script>
+  // Função para formatar o horário de Brasília
+  function getBrasiliaTime() {
+    const now = new Date();
+    
+    // Ajusta para o fuso horário de Brasília (UTC-3)
+    // Nota: Isso não leva em conta automaticamente o horário de verão
+    const offset = -3; // UTC-3 para Brasília (padrão)
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const brasiliaTime = new Date(utc + (3600000 * offset));
+    
+    // Formata a hora com 2 dígitos
+    const hours = brasiliaTime.getHours().toString().padStart(2, '0');
+    const minutes = brasiliaTime.getMinutes().toString().padStart(2, '0');
+    
+    return `${hours}:${minutes}`;
+  }
+
+  // Atualiza o relógio a cada minuto
+  function updateClock() {
+    document.getElementById('current-time').textContent = getBrasiliaTime();
+    
+    // Ajusta o timeout para sincronizar com a virada do minuto
+    const now = new Date();
+    const delay = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+    setTimeout(updateClock, delay);
+  }
+
+  // Inicia o relógio
+  updateClock();
+</script>
 
 <!-- Painel Pop-up -->
 <div class="space-panel" id="space-panel">
