@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Piano Tiles Evolution</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    
+    :root {
+      --tile-color-1: #FF5E5B;
+      --tile-color-2: #00CECB;
+      --tile-color-3: #FFED66;
+      --tile-color-4: #5E2BFF;
+      --tile-hit-color: #2EFFB8;
+      --miss-color: #FF2E63;
+    }
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: 'Poppins', sans-serif;
+      user-select: none;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 20px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    #score, #combo, #level {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    #combo {
+      color: var(--tile-hit-color);
+      text-align: center;
+    }
+
+    #level {
+      text-align: right;
+    }
+
+    #game {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90vw;
+      max-width: 450px;
+      height: calc(100vh - 160px);
+      display: flex;
+      gap: 8px;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .column {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tile {
+      position: absolute;
+      width: 100%;
+      height: 150px;
+      transform: translateY(100vh);
+      will-change: transform, opacity;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      touch-action: manipulation;
+      transition: transform 0.1s linear;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .tile.hit {
+      transform: translateY(var(--current-pos)) scale(0.95);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tile.missed {
+      background: var(--miss-color) !important;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateY(var(--current-pos)) translateX(0); }
+      20%, 60% { transform: translateY(var(--current-pos)) translateX(-5px); }
+      40%, 80% { transform: translateY(var(--current-pos)) translateX(5px); }
+    }
+
+    #game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #game-over.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #game-over h1 {
+      color: white;
+      font-size: 48px;
+      margin-bottom: 10px;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    }
+
+    #final-stats {
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 10px;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    #restart-btn {
+      background: linear-gradient(45deg, var(--tile-color-1), var(--tile-color-4));
+      color: white;
+      box-shadow: 0 4px 15px rgba(94, 43, 255, 0.4);
+    }
+
+    #restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(94, 43, 255, 0.6);
+    }
+
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 30;
+    }
+
+    #start-screen h1 {
+      color: white;
+      font-size: 42px;
+      margin-bottom: 30px;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    }
+
+    #difficulty-buttons {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    .difficulty-btn {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      margin-bottom: 15px;
+    }
+
+    .difficulty-btn:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .combo-effect {
+      position: absolute;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--tile-hit-color);
+      animation: comboPop 0.8s ease-out forwards;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    @keyframes comboPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    .hit-effect {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(46,255,184,0.8) 0%, rgba(46,255,184,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: hitEffect 0.6s ease-out forwards;
+      z-index: 5;
+    }
+
+    @keyframes hitEffect {
+      0% { transform: scale(0.3); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="start-screen">
+    <h1>Piano Tiles Evolution</h1>
+    <div id="difficulty-buttons">
+      <button class="btn difficulty-btn" onclick="startGame('easy')">Fácil</button>
+      <button class="btn difficulty-btn" onclick="startGame('medium')">Médio</button>
+      <button class="btn difficulty-btn" onclick="startGame('hard')">Difícil</button>
+    </div>
+  </div>
+
+  <div id="header">
+    <div id="score">Score: 0</div>
+    <div id="combo"></div>
+    <div id="level">Level: 1</div>
+  </div>
+
+  <div id="game">
+    <div class="column" id="col-0"></div>
+    <div class="column" id="col-1"></div>
+    <div class="column" id="col-2"></div>
+    <div class="column" id="col-3"></div>
+  </div>
+
+  <div id="game-over">
+    <h1>GAME OVER</h1>
+    <div id="final-stats">
+      Score: <span id="final-score">0</span><br>
+      Combo Máximo: <span id="max-combo">0</span><br>
+      Level: <span id="final-level">1</span>
+    </div>
+    <button id="restart-btn" class="btn" onclick="restartGame()">Jogar Novamente</button>
+  </div>
+</div>
+
+<script>
+  // Elementos do DOM
+  const scoreDisplay = document.getElementById('score');
+  const comboDisplay = document.getElementById('combo');
+  const levelDisplay = document.getElementById('level');
+  const gameOverDiv = document.getElementById('game-over');
+  const finalScoreDisplay = document.getElementById('final-score');
+  const maxComboDisplay = document.getElementById('max-combo');
+  const finalLevelDisplay = document.getElementById('final-level');
+  const startScreen = document.getElementById('start-screen');
+  const columns = [
+    document.getElementById('col-0'),
+    document.getElementById('col-1'),
+    document.getElementById('col-2'),
+    document.getElementById('col-3')
+  ];
+
+  // Cores das teclas
+  const tileColors = [
+    'var(--tile-color-1)',
+    'var(--tile-color-2)',
+    'var(--tile-color-3)',
+    'var(--tile-color-4)'
+  ];
+
+  // Estado do jogo
+  let gameState = {
+    active: false,
+    score: 0,
+    combo: 0,
+    maxCombo: 0,
+    level: 1,
+    baseSpeed: 2.5,
+    currentSpeed: 2.5,
+    spawnInterval: 1000,
+    spawnTimeout: null,
+    animationFrame: null,
+    difficulty: 'medium',
+    lastSpawnTime: 0,
+    touchStartY: null,
+    activeTiles: new Set(),
+    lastColumnIndex: -1,
+    columnStreak: 0
+  };
+
+  // Configurações de dificuldade
+  const difficultySettings = {
+    easy: { 
+      baseSpeed: 1.8, 
+      minInterval: 1200,
+      maxInterval: 1500,
+      speedIncrease: 0.2,
+      intervalDecrease: 30,
+      maxLevel: 10
+    },
+    medium: { 
+      baseSpeed: 2.5, 
+      minInterval: 800,
+      maxInterval: 1200,
+      speedIncrease: 0.3,
+      intervalDecrease: 40,
+      maxLevel: 15
+    },
+    hard: { 
+      baseSpeed: 3.2, 
+      minInterval: 600,
+      maxInterval: 1000,
+      speedIncrease: 0.4,
+      intervalDecrease: 50,
+      maxLevel: 20
+    }
+  };
+
+  // Inicia o jogo com a dificuldade selecionada
+  function startGame(difficulty) {
+    gameState.difficulty = difficulty;
+    const settings = difficultySettings[difficulty];
+    
+    gameState.baseSpeed = settings.baseSpeed;
+    gameState.currentSpeed = settings.baseSpeed;
+    gameState.spawnInterval = settings.maxInterval;
+    
+    startScreen.style.display = 'none';
+    gameState.active = true;
+    gameState.lastSpawnTime = Date.now();
+    
+    // Limpa qualquer estado anterior
+    columns.forEach(col => col.innerHTML = '');
+    gameState.activeTiles.clear();
+    gameState.lastColumnIndex = -1;
+    gameState.columnStreak = 0;
+    
+    updateUI();
+    setupTouchEvents();
+    gameLoop();
+  }
+
+  // Loop principal do jogo
+  function gameLoop() {
+    if (!gameState.active) return;
+    
+    const now = Date.now();
+    
+    // Gera novas teclas
+    if (now - gameState.lastSpawnTime > gameState.spawnInterval) {
+      spawnTile();
+      gameState.lastSpawnTime = now;
+    }
+    
+    // Atualiza posição das teclas
+    updateTiles();
+    
+    // Verifica teclas perdidas
+    checkMissedTiles();
+    
+    gameState.animationFrame = requestAnimationFrame(gameLoop);
+  }
+
+  // Configura eventos de toque para dispositivos móveis
+  function setupTouchEvents() {
+    columns.forEach(col => {
+      col.addEventListener('touchstart', handleTileInteraction, { passive: false });
+      col.addEventListener('click', handleTileInteraction);
+    });
+  }
+
+  // Manipula interações com as teclas (toque e clique)
+  function handleTileInteraction(e) {
+    e.preventDefault();
+    if (!gameState.active) return;
+
+    let tile;
+    if (e.type === 'touchstart') {
+      const touch = e.touches[0];
+      tile = document.elementFromPoint(touch.clientX, touch.clientY);
+    } else {
+      tile = e.target;
+    }
+
+    if (tile && tile.classList.contains('tile') && !tile.classList.contains('hit')) {
+      hitTile(tile);
+    } else {
+      // Tocou/clicou na coluna mas não em uma tecla
+      missInteraction();
+    }
+  }
+
+  // Acerta uma tecla
+  function hitTile(tile) {
+    if (gameState.activeTiles.has(tile)) return;
+    
+    gameState.activeTiles.add(tile);
+    tile.classList.add('hit');
+    
+    updateScore();
+    createHitEffect(tile);
+    
+    if (gameState.combo >= 5) {
+      createComboEffect(tile);
+    }
+    
+    // Remove a tecla após a animação
+    setTimeout(() => {
+      tile.remove();
+      gameState.activeTiles.delete(tile);
+    }, 300);
+  }
+
+  // Errou uma interação
+  function missInteraction() {
+    resetCombo();
+    
+    // Efeito visual de erro
+    document.body.style.backgroundColor = 'var(--miss-color)';
+    setTimeout(() => {
+      document.body.style.backgroundColor = '';
+    }, 100);
+  }
+
+  // Cria uma nova tecla com algoritmo inteligente para evitar repetições
+  function spawnTile() {
+    if (!gameState.active) return;
+
+    let colIndex;
+    const settings = difficultySettings[gameState.difficulty];
+    
+    // Algoritmo para evitar repetição de colunas
+    if (Math.random() < 0.3 && gameState.columnStreak >= 2) {
+      // Força mudança de coluna após 2 repetições
+      const possibleCols = [0, 1, 2, 3].filter(i => i !== gameState.lastColumnIndex);
+      colIndex = possibleCols[Math.floor(Math.random() * possibleCols.length)];
+      gameState.columnStreak = 0;
+    } else {
+      // Escolha aleatória normal
+      colIndex = Math.floor(Math.random() * 4);
+      if (colIndex === gameState.lastColumnIndex) {
+        gameState.columnStreak++;
+      } else {
+        gameState.columnStreak = 0;
+      }
+    }
+    
+    gameState.lastColumnIndex = colIndex;
+
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.style.background = tileColors[colIndex];
+    tile.dataset.speed = gameState.currentSpeed;
+    tile.style.setProperty('--current-pos', '0px');
+
+    columns[colIndex].appendChild(tile);
+  }
+
+  // Atualiza a posição de todas as teclas
+  function updateTiles() {
+    const tiles = document.querySelectorAll('.tile:not(.hit)');
+    const hitZoneTop = window.innerHeight - 250;
+    const hitZoneBottom = window.innerHeight - 200;
+    
+    tiles.forEach(tile => {
+      const currentPos = parseFloat(tile.style.getPropertyValue('--current-pos') || '0');
+      const speed = parseFloat(tile.dataset.speed);
+      const newPos = currentPos - speed;
+      
+      tile.style.setProperty('--current-pos', `${newPos}px`);
+      tile.style.transform = `translateY(calc(100vh + ${newPos}px))`;
+      
+      // Verifica se a tecla está na zona de acerto
+      const tileBottom = window.innerHeight + newPos + 150;
+      if (tileBottom > hitZoneTop && tileBottom < hitZoneBottom && !tile.classList.contains('missed')) {
+        tile.classList.add('missed');
+        missInteraction();
+      }
+      
+      // Remove teclas que saíram da tela
+      if (newPos < -window.innerHeight - 200) {
+        tile.remove();
+      }
+    });
+  }
+
+  // Cria efeito visual de acerto
+  function createHitEffect(tile) {
+    const rect = tile.getBoundingClientRect();
+    const effect = document.createElement('div');
+    effect.className = 'hit-effect';
+    effect.style.left = (rect.left + rect.width/2 - 50) + 'px';
+    effect.style.top = (rect.top + rect.height/2 - 50) + 'px';
+    document.body.appendChild(effect);
+    
+    setTimeout(() => effect.remove(), 600);
+  }
+
+  // Cria efeito visual de combo
+  function createComboEffect(tile) {
+    const rect = tile.getBoundingClientRect();
+    const effect = document.createElement('div');
+    effect.className = 'combo-effect';
+    effect.textContent = gameState.combo + ' COMBO!';
+    effect.style.left = (rect.left + rect.width/2 - 80) + 'px';
+    effect.style.top = (rect.top - 60) + 'px';
+    document.body.appendChild(effect);
+    
+    setTimeout(() => effect.remove(), 800);
+  }
+
+  // Atualiza a pontuação e combo
+  function updateScore() {
+    gameState.score += 10 * gameState.level;
+    gameState.combo++;
+    
+    if (gameState.combo > gameState.maxCombo) {
+      gameState.maxCombo = gameState.combo;
+    }
+    
+    // Atualiza o nível baseado no combo
+    const settings = difficultySettings[gameState.difficulty];
+    const newLevel = Math.min(
+      Math.floor(gameState.combo / 10) + 1,
+      settings.maxLevel
+    );
+    
+    if (newLevel > gameState.level) {
+      gameState.level = newLevel;
+      
+      // Aumenta a dificuldade com o nível
+      gameState.currentSpeed = settings.baseSpeed + (settings.speedIncrease * (gameState.level - 1));
+      gameState.spawnInterval = Math.max(
+        settings.minInterval,
+        settings.maxInterval - (settings.intervalDecrease * (gameState.level - 1))
+      );
+    }
+    
+    updateUI();
+  }
+
+  // Reseta o combo
+  function resetCombo() {
+    if (gameState.combo > 0) {
+      gameState.combo = 0;
+      updateUI();
+    }
+  }
+
+  // Atualiza a interface do usuário
+  function updateUI() {
+    scoreDisplay.textContent = `Score: ${gameState.score}`;
+    levelDisplay.textContent = `Level: ${gameState.level}`;
+    
+    if (gameState.combo > 0) {
+      comboDisplay.textContent = `${gameState.combo}x COMBO`;
+    } else {
+      comboDisplay.textContent = '';
+    }
+  }
+
+  // Verifica se uma tecla passou sem ser acertada
+  function checkMissedTiles() {
+    if (!gameState.active) return;
+    
+    const tiles = document.querySelectorAll('.tile.missed:not(.hit)');
+    
+    // Verifica se muitas teclas foram perdidas
+    if (tiles.length > 3) {
+      endGame();
+    }
+  }
+
+  // Finaliza o jogo
+  function endGame() {
+    gameState.active = false;
+    cancelAnimationFrame(gameState.animationFrame);
+    
+    // Atualiza estatísticas finais
+    finalScoreDisplay.textContent = gameState.score;
+    maxComboDisplay.textContent = gameState.maxCombo;
+    finalLevelDisplay.textContent = gameState.level;
+    
+    // Mostra tela de game over
+    gameOverDiv.classList.add('active');
+  }
+
+  // Reinicia o jogo
+  function restartGame() {
+    // Limpa todas as teclas
+    columns.forEach(col => col.innerHTML = '');
+    gameState.activeTiles.clear();
+    
+    // Reseta o estado do jogo
+    const settings = difficultySettings[gameState.difficulty];
+    
+    gameState = {
+      active: true,
+      score: 0,
+      combo: 0,
+      maxCombo: 0,
+      level: 1,
+      baseSpeed: settings.baseSpeed,
+      currentSpeed: settings.baseSpeed,
+      spawnInterval: settings.maxInterval,
+      spawnTimeout: null,
+      animationFrame: null,
+      difficulty: gameState.difficulty,
+      lastSpawnTime: Date.now(),
+      touchStartY: null,
+      activeTiles: new Set(),
+      lastColumnIndex: -1,
+      columnStreak: 0
+    };
+    
+    updateUI();
+    gameOverDiv.classList.remove('active');
+    gameLoop();
+  }
+
+  // Configura funções globais
+  window.startGame = startGame;
+  window.restartGame = restartGame;
+</script>
+</body>
+</html>
