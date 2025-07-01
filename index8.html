@@ -2,20 +2,113 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Efeito Matrix - Letras Caindo</title>
+  <title>Matrix - O Despertar</title>
   <style>
+    @font-face {
+      font-family: 'MatrixCode';
+      src: url('https://fonts.cdnfonts.com/css/matrix-code-nfi') format('woff2');
+    }
+    
     body, html {
-      margin: 0; padding: 0; overflow: hidden;
-      background: black;
+      margin: 0; 
+      padding: 0; 
+      overflow: hidden;
+      background: #000;
       height: 100vh;
       color: #0F0;
     }
+    
     canvas {
       display: block;
       position: fixed;
-      top: 0; left: 0;
+      top: 0; 
+      left: 0;
       width: 100%;
       height: 100%;
+      z-index: 1;
+    }
+    
+    .message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      max-width: 80%;
+      text-shadow: 0 0 8px #0F0, 0 0 15px #0F0;
+      font-family: 'MatrixCode', 'Courier New', monospace;
+      letter-spacing: 1px;
+    }
+    
+    .message h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #0F0;
+    }
+    
+    .message p {
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+    
+    .message.active {
+      opacity: 1;
+    }
+    
+    .choice {
+      position: absolute;
+      bottom: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+    
+    .choice.active {
+      display: flex;
+      animation: pulse 2s infinite;
+    }
+    
+    .btn-matrix {
+      background: transparent;
+      color: #0F0;
+      border: 1px solid #0F0;
+      padding: 12px 25px;
+      font-family: 'MatrixCode', 'Courier New', monospace;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-shadow: 0 0 5px #0F0;
+      letter-spacing: 1.5px;
+    }
+    
+    .btn-matrix:hover {
+      background: rgba(0, 255, 0, 0.15);
+      box-shadow: 0 0 20px #0F0;
+      transform: scale(1.05);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+    
+    @keyframes glitch {
+      0% { text-shadow: 0 0 8px #0F0; }
+      25% { text-shadow: -3px -3px 8px #F00; }
+      50% { text-shadow: 3px 3px 8px #00F; }
+      100% { text-shadow: 0 0 8px #0F0; }
     }
   </style>
 </head>
@@ -23,29 +116,80 @@
 
 <canvas id="matrix"></canvas>
 
+<div id="message1" class="message">
+  <h1>O SISTEMA ESTÁ EM VOCÊ</h1>
+  <p>Desde o dia do seu nascimento para te manter sob controle...</p>
+</div>
+
+<div id="message2" class="message hidden">
+  <h1>O QUE É REAL?</h1>
+  <p>Como você define "real"? Se está falando sobre o que pode sentir,<br>o que pode cheirar, o que pode saborear e ver...<br>então "real" são simplesmente sinais elétricos interpretados pelo seu cérebro.</p>
+</div>
+
+<div id="message3" class="message hidden">
+  <h1>ESCOLHA É UMA ILUSÃO</h1>
+  <p>Criada entre aqueles com poder...<br>e aqueles sem.</p>
+</div>
+
+<div id="message4" class="message hidden">
+  <h1>TOME A PÍLULA</h1>
+  <p>Sua escolha determinará seu destino...</p>
+</div>
+
+<div id="choice" class="choice">
+  <button class="btn-matrix" onclick="chooseRed()">PÍLULA VERMELHA - DESPERTAR</button>
+  <button class="btn-matrix" onclick="chooseBlue()">PÍLULA AZUL - ESQUECER</button>
+</div>
+
+<div id="finalMessage" class="message hidden">
+  <h1 id="finalTitle"></h1>
+  <p id="finalText"></p>
+</div>
+
 <script>
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
 
+  // Configurações do efeito Matrix
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const letters = 'アカサタナハマヤラワガザダバパABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-  const fontSize = 18;
+  const letters = 'アカサタナハマヤラワガザダバパ01';
+  const fontSize = 12; // Fonte menor
   const columns = Math.floor(canvas.width / fontSize);
-
   const drops = Array(columns).fill(0);
 
+  // Frases filosóficas do Matrix
+  const matrixQuotes = [
+    "O sistema é nosso inimigo...",
+    "Você é um escravo, Neo...",
+    "Não há colher...",
+    "O oráculo já te avisou...",
+    "O escolhido virá...",
+    "O agente Smith está te observando...",
+    "Liberdade tem um preço...",
+    "A verdade dói, Neo..."
+  ];
+
   function draw() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    // Efeito de fade mais suave
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px monospace';
+    ctx.font = `bold ${fontSize}px 'MatrixCode', monospace`;
 
     for (let i = 0; i < drops.length; i++) {
-      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      // Caracteres japoneses apenas nas primeiras linhas
+      const useJapanese = drops[i] < 5 && Math.random() > 0.7;
+      const text = useJapanese ? 
+        letters.charAt(Math.floor(Math.random() * 12)) :
+        letters.charAt(Math.floor(Math.random() * 2) + 12);
+      
+      // Efeito de brilho variável
+      const brightness = Math.random() > 0.95 ? 1 : Math.random() * 0.5 + 0.3;
+      ctx.fillStyle = `rgba(0, 255, 0, ${brightness})`;
+      
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
@@ -53,19 +197,105 @@
       }
       drops[i]++;
     }
+
+    // Mostrar citação aleatória
+    if (Math.random() < 0.003) {
+      showRandomQuote();
+    }
   }
 
-  setInterval(draw, 33);
+  function showRandomQuote() {
+    const quote = matrixQuotes[Math.floor(Math.random() * matrixQuotes.length)];
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    const textWidth = ctx.measureText(quote).width;
+    ctx.fillRect(canvas.width/2 - textWidth/2 - 15, canvas.height/2 - 25, textWidth + 30, 50);
+    ctx.fillStyle = '#0F0';
+    ctx.font = 'bold 16px "MatrixCode", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(quote, canvas.width/2, canvas.height/2);
+    ctx.textAlign = 'left';
+  }
+
+  // Sequência de mensagens com tempos ajustados
+  function showMessages() {
+    const sequence = [
+      { id: 'message1', delay: 1000, duration: 4000 },
+      { id: 'message2', delay: 5500, duration: 8000 },
+      { id: 'message3', delay: 14000, duration: 5000 },
+      { id: 'message4', delay: 20000, duration: 5000 }
+    ];
+
+    sequence.forEach((msg, index) => {
+      // Mostrar mensagem
+      setTimeout(() => {
+        document.getElementById(msg.id).classList.remove('hidden');
+        document.getElementById(msg.id).classList.add('active');
+        
+        // Esconder mensagem após duração
+        if (index < sequence.length - 1) {
+          setTimeout(() => {
+            document.getElementById(msg.id).classList.remove('active');
+          }, msg.duration - 500);
+        } else {
+          // Última mensagem - mostrar escolha
+          setTimeout(() => {
+            document.getElementById(msg.id).classList.remove('active');
+            document.getElementById('choice').classList.add('active');
+          }, msg.duration - 500);
+        }
+      }, msg.delay);
+    });
+  }
+
+  function chooseRed() {
+    document.getElementById('choice').classList.remove('active');
+    document.getElementById('finalTitle').textContent = "VOCÊ ESCOLHEU A VERDADE";
+    document.getElementById('finalText').textContent = "Lembre-se: Tudo o que eu posso te oferecer é a verdade. Nada mais.";
+    document.getElementById('finalMessage').classList.remove('hidden');
+    document.getElementById('finalMessage').classList.add('active');
+    
+    // Efeito mais intenso
+    const intenseMatrix = setInterval(draw, 20);
+    
+    setTimeout(() => {
+      clearInterval(intenseMatrix);
+      window.location.href = 'neo.html';
+    }, 5000);
+  }
+
+  function chooseBlue() {
+    document.getElementById('choice').classList.remove('active');
+    document.getElementById('finalTitle').textContent = "VOLTANDO À MATRIX";
+    document.getElementById('finalText').textContent = "Você acordará em sua cama e acreditará no que quiser acreditar...";
+    document.getElementById('finalMessage').classList.remove('hidden');
+    document.getElementById('finalMessage').classList.add('active');
+    
+    // Efeito mais lento
+    const slowMatrix = setInterval(draw, 50);
+    
+    setTimeout(() => {
+      clearInterval(slowMatrix);
+      window.location.href = 'matrix.html';
+    }, 5000);
+  }
+
+  // Iniciar efeitos
+  const matrixInterval = setInterval(draw, 33);
+  showMessages();
 
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
 
-  // Redireciona automaticamente após 5 segundos
-  setTimeout(() => {
-    window.location.href = 'index.html';
-  }, 5000);
+  // Efeito sonoro opcional (descomente para ativar)
+  /*
+  document.addEventListener('click', () => {
+    const audio = new Audio('matrix-sound.mp3');
+    audio.volume = 0.3;
+    audio.play();
+  });
+  */
 </script>
 
 </body>
