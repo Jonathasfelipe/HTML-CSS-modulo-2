@@ -1,7 +1,15 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Sistema Solar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistema Solar neo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+  <!-- Seu <style> pode continuar aqui -->
+</head>
+<body>
+    <audio id="bg-audio" src="som-fundo.mp3" loop></audio>
+<audio id="click-sound" src="click.mp3"></audio>
   <style>
     * {
       margin: 0; padding: 0; box-sizing: border-box;
@@ -145,7 +153,7 @@
 <body>
   <div class="galaxy" id="galaxy">
     <div class="solar-system">
-      <div class="sun"></div><div class="orbit" style="width: 100px; height: 100px;"></div>
+      <div class="sun"></div><div id="halley" class="cometa-halley"><div class="orbit" style="width: 100px; height: 100px;"></div>
   <div class="planet neon" style="width: 8px; height: 8px; background: #aaa; --distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp média: 167 °C\nDistância do Sol: 57,9 mi km"></div>
 
   <div class="orbit" style="width: 140px; height: 140px;"></div>
@@ -170,36 +178,454 @@
 
   <div class="orbit" style="width: 600px; height: 600px;"></div>
   <div class="planet neon" style="width: 14px; height: 14px; background: #00f; --distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp média: -200 °C\nDistância do Sol: 4.495 mi km"></div>
-</div>
-<div class="info-panel">
-  <strong>Explore os planetas</strong><br/>
-  Passe o mouse sobre um planeta para ver detalhes.<br/><br/>
-  <div>Data Atual: <time id="current-date"></time></div>
-  Estrelas cadentes aparecerão ocasionalmente!
+</div></div>
+</div>></div>div>
+<
+<!-- HUD Minimalista -->
+<div class="space-hud-minimal">
+  <button class="menu-btn" id="menu-toggle">☰ Menu</button>
+  <div class="hud-time" id="current-time">--:--:--</div>
 </div>
 
-  </div>  <script>
+
+<script>
+  // Função para formatar o horário de Brasília
+  function getBrasiliaTime() {
+    const now = new Date();
+    
+    // Ajusta para o fuso horário de Brasília (UTC-3)
+    // Nota: Isso não leva em conta automaticamente o horário de verão
+    const offset = -3; // UTC-3 para Brasília (padrão)
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const brasiliaTime = new Date(utc + (3600000 * offset));
+    
+    // Formata a hora com 2 dígitos
+    const hours = brasiliaTime.getHours().toString().padStart(2, '0');
+    const minutes = brasiliaTime.getMinutes().toString().padStart(2, '0');
+    
+    return `${hours}:${minutes}`;
+  }
+
+  // Atualiza o relógio a cada minuto
+  function updateClock() {
+    document.getElementById('current-time').textContent = getBrasiliaTime();
+    
+    // Ajusta o timeout para sincronizar com a virada do minuto
+    const now = new Date();
+    const delay = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+    setTimeout(updateClock, delay);
+  }
+
+  // Inicia o relógio
+  updateClock();
+</script>
+
+<!-- Painel Pop-up -->
+<div class="space-panel" id="space-panel">
+  <div class="panel-header">
+    <h2>🪐 Painel de Controle</h2>
+    <button class="close-btn" id="close-panel">×</button>
+  </div>
+  
+  <div class="panel-sections">
+    <!-- Seção Status -->
+    <div class="panel-section">
+      <h3>🌌 Status do Sistema</h3>
+      <div class="info-row">
+        <span>Data:</span>
+        <span id="panel-date">--/--/----</span>
+      </div>
+      <div class="info-row">
+        <span>Hora Universal:</span>
+        <span id="panel-time">--:--:--</span>
+      </div>
+    </div>
+    
+    <!-- Seção Notícias -->
+    <div class="panel-section">
+      <h3>📡 Últimas Notícias</h3>
+      <div class="news-item" id="news-item">
+        <p>Carregando notícias espaciais...</p>
+      </div>
+      <button class="panel-btn" id="refresh-news">Atualizar Notícias</button>
+    </div>
+    
+    <!-- Seção Controles -->
+    <!-- Basta adicionar novas divs com a classe .panel-section -->
+<div class="panel-section">
+  <h3>🔭 Observações</h3>
+  <!-- Conteúdo aqui -->
+</div>
+    <div class="panel-section">
+      <h3>🎛️ Controles</h3>
+      <button class="panel-btn" id="toggle-sound">🔊 Alternar Som</button>
+      <button class="panel-btn" id="toggle-3d">👁️ Modo 3D</button>
+    </div>
+  </div>
+  
+  <!-- Rodapé com Links -->
+  <div class="panel-footer">
+    <a href="https://www.nasa.gov" target="_blank" class="panel-link">🌎 NASA</a>
+    <a href="https://www.esa.int" target="_blank" class="panel-link">🛰️ ESA</a>
+    <a href="https://www.seti.org" target="_blank" class="panel-link">👽 SETI</a>
+  </div>
+</div>
+
+<style>
+  /* Estilo Minimalista */
+  .space-hud-minimal {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .menu-btn {
+    background: rgba(0, 50, 100, 0.7);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .menu-btn:hover {
+    background: rgba(0, 100, 150, 0.8);
+    transform: translateY(-2px);
+  }
+  
+  .hud-time {
+    color: white;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  
+  /* Estilo do Painel */
+  .space-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    background: rgba(10, 20, 40, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 180, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 0 30px rgba(0, 100, 255, 0.3);
+    z-index: 1001;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow-y: auto;
+  }
+  
+  .space-panel.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .panel-header h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+    line-height: 1;
+  }
+  
+  .panel-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  .panel-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #4fc3f7;
+  }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .news-item {
+    background: rgba(0, 30, 60, 0.4);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-left: 3px solid #4fc3f7;
+  }
+  
+  .panel-btn {
+    width: 100%;
+    background: rgba(0, 120, 200, 0.3);
+    border: 1px solid rgba(100, 200, 255, 0.2);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  
+  .panel-btn:hover {
+    background: rgba(0, 150, 255, 0.4);
+  }
+  
+  .panel-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .panel-link {
+    color: #4fc3f7;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .panel-link:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+  
+  /* Overlay */
+  .panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .panel-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 600px) {
+    .space-panel {
+      padding: 15px;
+      width: 95%;
+    }
+    
+    .panel-header h2 {
+      font-size: 18px;
+    }
+    
+    .panel-footer {
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+</style>
+
+<script>
+  // Elementos DOM
+  const menuToggle = document.getElementById('menu-toggle');
+  const closePanel = document.getElementById('close-panel');
+  const spacePanel = document.getElementById('space-panel');
+  const overlay = document.createElement('div');
+  overlay.className = 'panel-overlay';
+  document.body.appendChild(overlay);
+  
+  // Dados de notícias
+  const spaceNews = [
+    {
+      title: "Novo Exoplaneta Descoberto",
+      content: "A NASA confirmou a descoberta de um exoplaneta na zona habitável de sua estrela, com possíveis condições para água líquida.",
+      source: "NASA"
+    },
+    {
+      title: "Missão Marte 2024",
+      content: "A ESA anunciou os detalhes da próxima missão tripulada ao planeta vermelho, prevista para 2024.",
+      source: "ESA"
+    },
+    {
+      title: "Sinais de Rádio Misteriosos",
+      content: "Radiotelescópios detectaram padrões incomuns em sinais de rádio vindos da direção da constelação de Lira.",
+      source: "SETI"
+    }
+  ];
+  
+  // Funções
+  function togglePanel() {
+    spacePanel.classList.toggle('active');
+    overlay.classList.toggle('active');
+    updatePanelData();
+  }
+  
+  function updatePanelData() {
+    const now = new Date();
+    document.getElementById('panel-date').textContent = now.toLocaleDateString('pt-BR');
+    document.getElementById('panel-time').textContent = now.toUTCString().split(' ')[4];
+  }
+  
+  function showRandomNews() {
+    const newsItem = document.getElementById('news-item');
+    const randomNews = spaceNews[Math.floor(Math.random() * spaceNews.length)];
+    
+    newsItem.innerHTML = `
+      <h4>${randomNews.title}</h4>
+      <p>${randomNews.content}</p>
+      <small>Fonte: ${randomNews.source}</small>
+    `;
+  }
+  
+  // Event Listeners
+  menuToggle.addEventListener('click', togglePanel);
+  closePanel.addEventListener('click', togglePanel);
+  overlay.addEventListener('click', togglePanel);
+  document.getElementById('refresh-news').addEventListener('click', showRandomNews);
+  
+  // Atualizações em tempo real
+  setInterval(updatePanelData, 1000);
+  setInterval(showRandomNews, 30000); // Rotaciona notícias a cada 30s
+  
+  // Inicialização
+  updatePanelData();
+  showRandomNews();
+  
+  // Controles
+  document.getElementById('toggle-sound').addEventListener('click', () => {
+    alert('Controle de som seria implementado aqui');
+  });
+  
+  document.getElementById('toggle-3d').addEventListener('click', () => {
+    alert('Alternância para modo 3D seria implementada aqui');
+  });
+</script>
+
+<script>
+  // Atualizar data e hora
+  function updateDateTime() {
+    const now = new Date();
+    document.getElementById('current-date').textContent = now.toLocaleDateString('pt-BR');
+    document.getElementById('current-time').textContent = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+  }
+  
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+  
+  // Mostrar notificação
+  function showNotification(message, duration = 3000) {
+    const notification = document.getElementById('space-notification');
+    const content = document.getElementById('notification-content');
+    
+    content.textContent = message;
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, duration);
+  }
+  
+  // Eventos dos botões
+  document.getElementById('toggle-sound').addEventListener('click', function() {
+    // Implementar lógica de som
+    showNotification('Controle de som ativado');
+  });
+  
+  document.getElementById('toggle-orbits').addEventListener('click', function() {
+    // Implementar mostrar/esconder órbitas
+    showNotification('Visualização de órbitas alterada');
+  });
+  
+  document.getElementById('toggle-info').addEventListener('click', function() {
+    // Implementar mostrar informações detalhadas
+    showNotification('Modo informativo ativado');
+  });
+  
+  // Mostrar mensagem inicial
+  setTimeout(() => {
+    showNotification('Explore o sistema solar passando o mouse sobre os planetas', 5000);
+  }, 1000);
+</script>
+
+   <script src="galaxias.js"></script>  
+   <script>
     const galaxy = document.getElementById('galaxy');
     for (let i = 0; i < 20; i++) {
       const star = document.createElement('div');
       star.classList.add('star');
       star.style.top = Math.random() * 100 + 'vh';
       star.style.left = Math.random() * 100 + 'vw';
-      star.style.opacity = 0.3 + Math.random() * 0.5;
       galaxy.appendChild(star);
     }
 
-    setInterval(() => {
+    function spawnShootingStar() {
       const shootingStar = document.createElement('div');
       shootingStar.classList.add('shooting-star');
       shootingStar.style.top = Math.random() * 80 + 'vh';
-      shootingStar.style.left = Math.random() * 80 + 20 + 'vw';
+      shootingStar.style.left = Math.random() * 80 + 'vw';
       galaxy.appendChild(shootingStar);
       setTimeout(() => shootingStar.remove(), 1500);
-    }, 8000);
+    }
+    setInterval(spawnShootingStar, 8000);
 
-    const dateEl = document.getElementById('current-date');
-    const now = new Date();
-    dateEl.textContent = now.toLocaleString('pt-BR');
-  </script></body>
+    const bgAudio = document.getElementById('bg-audio');
+    document.addEventListener("click", () => {
+      if (bgAudio.paused) bgAudio.play().catch(() => {});
+    });
+
+    const clickSound = document.getElementById("click-sound");
+    document.querySelectorAll(".planet").forEach(p => {
+      p.addEventListener("mouseenter", () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      });
+    });
+  </script>
+  <script src="script.js"></script>
+  </body>
 </html>
+
+
