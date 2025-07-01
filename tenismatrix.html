@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tênis Matrix Pixelado</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      color: #0f0;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+      touch-action: manipulation;
+      user-select: none;
+      height: 100vh;
+      position: relative;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: rgba(0, 20, 0, 0.2);
+    }
+
+    .bola {
+      width: 16px;
+      height: 16px;
+      background-color: #0f0;
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 10px #0f0;
+      pointer-events: none;
+      z-index: 30;
+      image-rendering: pixelated;
+    }
+
+    .base {
+      width: 100px;
+      height: 12px;
+      background-color: #0f0;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20%;
+      box-shadow: 0 0 10px #0f0;
+      z-index: 40;
+      image-rendering: pixelated;
+    }
+
+    .fim {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      background-color: #0f0;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      font-size: 1em;
+      color: #000;
+      z-index: 50;
+      box-shadow: 0 0 20px #0f0;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+    }
+
+    .bloco {
+      width: 40px;
+      height: 20px;
+      background-color: #0f0;
+      position: absolute;
+      box-shadow: 0 0 5px #0f0;
+      pointer-events: none;
+      z-index: 20;
+      image-rendering: pixelated;
+      border: 1px solid #000;
+    }
+
+    .placar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 2px solid #0f0;
+      padding: 10px;
+      font-size: 1em;
+      color: #0f0;
+      z-index: 100;
+      font-family: 'Courier New', monospace;
+    }
+
+    .notificacao {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+      text-align: center;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .notificacao h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #0f0;
+    }
+
+    .notificacao p {
+      font-size: 1em;
+      margin-bottom: 15px;
+      max-width: 300px;
+    }
+
+    .notificacao button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      width: 200px;
+    }
+
+    .notificacao button:hover {
+      background-color: #0f0;
+      color: #000;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #0f0;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    .power-up {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #0f0;
+      z-index: 35;
+      box-shadow: 0 0 10px #0f0;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      image-rendering: pixelated;
+    }
+
+    .matrix-code {
+      position: absolute;
+      color: rgba(0, 255, 0, 0.3);
+      font-size: 16px;
+      z-index: 5;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    @keyframes flash {
+      0% { background-color: #0f0; }
+      50% { background-color: #000; }
+      100% { background-color: #0f0; }
+    }
+
+    /* Menu styles */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .menu-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .menu-title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #0f0;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .ranking-container {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 300px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #0f0;
+      padding: 10px;
+    }
+
+    .ranking-title {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-decoration: underline;
+    }
+
+    .ranking-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+    }
+
+    .ranking-name {
+      font-weight: bold;
+    }
+
+    .ranking-score {
+      color: #0f0;
+    }
+
+    .input-name {
+      background: transparent;
+      border: 1px solid #0f0;
+      color: #0f0;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      width: 100%;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .input-name:focus {
+      outline: none;
+      border-color: #0f0;
+      box-shadow: 0 0 5px #0f0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Efeitos especiais */
+    .special-block {
+      animation: flash 0.5s infinite;
+    }
+
+    .bonus-points {
+      position: absolute;
+      color: #0f0;
+      font-weight: bold;
+      z-index: 60;
+      animation: float-up 1s forwards;
+    }
+
+    @keyframes float-up {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-50px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div class="bola" id="bola"></div>
+    <div class="base" id="base"></div>
+    <div class="fim" id="fim">game over</div>
+    <div class="placar" id="placar">
+      Pontos: <span id="pontos">0</span><br>
+      Nível: <span id="nivel">1</span><br>
+      Vidas: <span id="vidas">3</span>
+    </div>
+
+    <div class="mobile-controls" id="mobile-controls">
+      <div class="mobile-btn" id="left-btn">←</div>
+      <div class="mobile-btn" id="right-btn">→</div>
+    </div>
+
+    <div class="notificacao" id="notificacao">
+      <div class="menu">
+        <h2 class="menu-title">TÊNIS MATRIX NÍVEL 2</h2>
+        
+        <div id="main-menu">
+          <div class="menu-options">
+            <button id="iniciar-jogo">INICIAR JOGO</button>
+            <button id="ver-ranking">VER RANKING</button>
+            <button id="ver-instrucoes">INSTRUÇÕES</button>
+          </div>
+        </div>
+
+        <div id="instructions" class="hidden">
+          <p>NÍVEL 2 - RECURSOS ESPECIAIS:</p>
+          <p>• Blocos piscantes valem mais pontos</p>
+          <p>• Efeitos visuais melhorados</p>
+          <p>• Controles otimizados para mobile</p>
+          <p>• Sistema de ranking aprimorado</p>
+          <p>POWER-UPS:</p>
+          <p><strong>E</strong> - Expande a base</p>
+          <p><strong>V</strong> - +1 vida</p>
+          <p><strong>P</strong> - Bola rápida</p>
+          <button id="voltar-menu">VOLTAR</button>
+        </div>
+
+        <div id="ranking" class="hidden">
+          <div class="ranking-container">
+            <div class="ranking-title">TOP 10 JOGADORES</div>
+            <div id="ranking-list"></div>
+          </div>
+          <button id="voltar-ranking">VOLTAR</button>
+        </div>
+      </div>
+    </div>
+ 
+  <script>
+      // Cria efeito Matrix de código caindo
+    function criarEfeitoMatrix() {
+      const chars = "01";
+      const columns = Math.floor(window.innerWidth / 20);
+      
+      for (let i = 0; i < columns; i++) {
+        const code = document.createElement('div');
+        code.className = 'matrix-code';
+        code.style.left = (i * 20) + 'px';
+        code.style.animationDelay = Math.random() + 's';
+        code.textContent = Array(30).fill(0).map(() => 
+          chars[Math.floor(Math.random() * chars.length)]
+        ).join('');
+        gameContainer.appendChild(code);
+      }
+    }
+    const bola = document.getElementById('bola');
+    const base = document.getElementById('base');
+    const fim = document.getElementById('fim');
+    const placar = document.getElementById('placar');
+    const pontosEl = document.getElementById('pontos');
+    const nivelEl = document.getElementById('nivel');
+    const vidasEl = document.getElementById('vidas');
+    const notificacao = document.getElementById('notificacao');
+    const gameContainer = document.getElementById('game-container');
+document.getElementById('game-over-screen');
+    const finalScoreEl = document.getElementById('final-score');
+    const playerNameInput = document.getElementById('player-name');
+    const rankingList = document.getElementById('ranking-list');
+    // Configurações do jogo
+    const config = {
+      bolaSize: 16,
+      baseWidth: 50,
+      baseHeight: 12,
+      blocoWidth: 40,
+      blocoHeight: 20,
+      velocidadeInicial: 4,
+      aumentoVelocidade: 0.2
+    };
+
+    // Estado do jogo
+    let x = 100;
+    let y = 100;
+    let dx = config.velocidadeInicial;
+    let dy = config.velocidadeInicial;
+    let gameOver = false;
+    let level = 1;
+    let pontos = 0;
+    let vidas = 3;
+    let blocos = [];
+    let particles = [];
+    let powerUps = [];
+    let animationId = null;
+    let blocoInterval = null;
+    let ranking =
+    JSON.parse(localStorage.getItem('matrixTenisRanking')) || [];
+    let baseX = window.innerWidth / 2 - config.baseWidth / 2;
+    let isDragging = false;
+
+    // Configura eventos de UI
+    document.getElementById('iniciar-jogo').addEventListener('click', () => showScreen('game'));
+    document.getElementById('ver-ranking').addEventListener('click', () => showScreen('ranking'));
+    document.getElementById('ver-instrucoes').addEventListener('click', () => showScreen('instructions'));
+    document.getElementById('voltar-menu').addEventListener('click', () => showScreen('main'));
+    document.getElementById('voltar-ranking').addEventListener('click', () => showScreen('main'));
+    document.getElementById('jogar-novamente').addEventListener('click', saveScoreAndRestart);
+    document.getElementById('voltar-menu-final').addEventListener('click', returnToMenu);
+
+    // Controles touchscreen
+    gameContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+    gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    gameContainer.addEventListener('touchend', handleTouchEnd);
+
+    // Controles de teclado
+    document.addEventListener('keydown', handleKeyDown);
+
+    function handleTouchStart(e) {
+      e.preventDefault();
+      isDragging = true;
+      updateBasePosition(e.touches[0].clientX);
+    }
+
+    function handleTouchMove(e) {
+      if (isDragging) {
+        e.preventDefault();
+        updateBasePosition(e.touches[0].clientX);
+      }
+    }
+
+    function handleTouchEnd() {
+      isDragging = false;
+    }
+
+    function handleKeyDown(e) {
+      const step = 20;
+      if (e.key === 'ArrowLeft') {
+        baseX = Math.max(0, baseX - step);
+        base.style.left = baseX + 'px';
+      } else if (e.key === 'ArrowRight') {
+        baseX = Math.min(window.innerWidth - config.baseWidth, baseX + step);
+        base.style.left = baseX + 'px';
+      }
+    }
+
+    function updateBasePosition(clientX) {
+      baseX = clientX - config.baseWidth / 2;
+      // Garante que a base não saia da tela
+      baseX = Math.max(0, Math.min(window.innerWidth - config.baseWidth, baseX));
+      base.style.left = baseX + 'px';
+    }
+
+    // Mostra diferentes telas do menu
+    function showScreen(screenId) {
+      document.getElementById('main-menu').classList.add('hidden');
+      document.getElementById('instructions').classList.add('hidden');
+      document.getElementById('ranking').classList.add('hidden');
+      
+      if (screenId === 'game') {
+        iniciarJogo();
+        return;
+      }
+      
+      if (screenId === 'ranking') {
+        updateRankingDisplay();
+        document.getElementById('ranking').classList.remove('hidden');
+      } 
+      else if (screenId === 'instructions') {
+        document.getElementById('instructions').classList.remove('hidden');
+      }
+      else if (screenId === 'main') {
+        document.getElementById('main-menu').classList.remove('hidden');
+      }
+    }
+
+    // Cria efeito Matrix de código caindo
+    function criarEfeitoMatrix() {
+      const chars = "01";
+      const columns = Math.floor(window.innerWidth / 20);
+      
+      for (let i = 0; i < columns; i++) {
+        const code = document.createElement('div');
+        code.className = 'matrix-code';
+        code.style.left = (i * 20) + 'px';
+        code.style.animationDelay = Math.random() + 's';
+        code.textContent = Array(30).fill(0).map(() => 
+          chars[Math.floor(Math.random() * chars.length)]
+        ).join('');
+        gameContainer.appendChild(code);
+      }
+    }
+// Mostra diferentes telas do menu
+    function showScreen(screenId) {
+      document.getElementById('main-menu').classList.add('hidden');
+      document.getElementById('instructions').classList.add('hidden');
+      document.getElementById('ranking').classList.add('hidden');
+      
+      if (screenId === 'game') {
+        iniciarJogo();
+        return;
+      }
+      
+      if (screenId === 'ranking') {
+        updateRankingDisplay();
+        document.getElementById('ranking').classList.remove('hidden');
+      } 
+      else if (screenId === 'instructions') {
+        document.getElementById('instructions').classList.remove('hidden');
+      }
+      else if (screenId === 'main') {
+        document.getElementById('main-menu').classList.remove('hidden');
+      }
+    }
+
+    // Atualiza a exibição do ranking
+    function updateRankingDisplay() {
+      rankingList.innerHTML = '';
+      
+      const sortedRanking = [...ranking].sort((a, b) => b.score - a.score);
+      const top10 = sortedRanking.slice(0, 10);
+      
+      if (top10.length === 0) {
+        rankingList.innerHTML = '<p>Nenhum recorde ainda</p>';
+        return;
+      }
+      
+      top10.forEach((player, index) => {
+        const item = document.createElement('div');
+        item.className = 'ranking-item';
+        item.innerHTML = `
+          <span class="ranking-name">${index + 1}. ${player.name}</span>
+          <span class="ranking-score">${player.score}</span>
+        `;
+        rankingList.appendChild(item);
+      });
+    }
+
+    // Salva a pontuação do jogador
+    function saveScoreAndRestart() {
+      const playerName = playerNameInput.value.trim() || 'Anônimo';
+      
+      ranking.push({
+        name: playerName.substring(0, 20),
+        score: pontos,
+        date: new Date().toLocaleDateString()
+      });
+      
+      localStorage.setItem('matrixTenisRanking', JSON.stringify(ranking));
+      gameOverScreen.classList.add('hidden');
+      iniciarJogo();
+    }
+
+    // Volta para o menu principal
+    function returnToMenu() {
+      gameOverScreen.classList.add('hidden');
+      notificacao.classList.remove('hidden');
+      showScreen('main');
+    }
+    // Atualiza o placar
+    function atualizarPlacar() {
+      pontosEl.textContent = pontos;
+      nivelEl.textContent = level;
+      vidasEl.textContent = vidas;
+    }
+    
+
+    // Cria um novo bloco
+    function criarBloco() {
+      const bloco = document.createElement('div');
+      bloco.className = 'bloco';
+      bloco.style.left = Math.random() * (window.innerWidth - config.blocoWidth) + 'px';
+      bloco.style.top = '50px';
+      gameContainer.appendChild(bloco);
+      blocos.push(bloco);
+    }
+
+    // Cria partículas para efeitos
+    function criarParticulas(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        p.style.opacity = Math.random();
+        gameContainer.appendChild(p);
+        particles.push({
+          element: p,
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          life: Math.random() * 30 + 20
+        });
+      }
+    }
+
+    // Atualiza as partículas
+    function atualizarParticulas() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life--;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.element.style.left = p.x + 'px';
+        p.element.style.top = p.y + 'px';
+        p.element.style.opacity = p.life / 50;
+
+        if (p.life <= 0) {
+          p.element.remove();
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    // Cria um power-up
+    function criarPowerUp(x, y) {
+      if (Math.random() > 0.3) return; // 30% de chance
+
+      const types = [
+        { char: 'E', effect: 'expand' },
+        { char: 'V', effect: 'vida' },
+        { char: 'P', effect: 'power' }
+      ];
+      const type = types[Math.floor(Math.random() * types.length)];
+
+      const powerUp = document.createElement('div');
+      powerUp.className = 'power-up';
+      powerUp.textContent = type.char;
+      powerUp.dataset.effect = type.effect;
+      powerUp.style.left = x + 'px';
+      powerUp.style.top = y + 'px';
+      gameContainer.appendChild(powerUp);
+      powerUps.push(powerUp);
+    }
+
+    // Aplica o efeito do power-up
+    function aplicarPowerUp(effect) {
+      switch(effect) {
+        case 'expand':
+          base.style.width = (config.baseWidth * 1.5) + 'px';
+          setTimeout(() => {
+            base.style.width = config.baseWidth + 'px';
+          }, 10000);
+          break;
+        case 'vida':
+          vidas++;
+          break;
+        case 'power':
+          dx *= 1.5;
+          dy *= 1.5;
+          setTimeout(() => {
+            dx /= 1.5;
+            dy /= 1.5;
+          }, 5000);
+          break;
+      }
+      atualizarPlacar();
+    }
+
+    // Loop principal do jogo
+    function atualizarJogo() {
+      if (gameOver) return;
+
+      // Movimenta a bola
+      x += dx;
+      y += dy;
+
+      // Colisão com as paredes
+      if (x <= 0 || x >= window.innerWidth - config.bolaSize) {
+        dx = -dx;
+        x = Math.max(0, Math.min(window.innerWidth - config.bolaSize, x));
+      }
+
+      if (y <= 0) {
+        dy = -dy;
+        y = 0;
+      }
+
+      // Colisão com a base
+      const baseRect = base.getBoundingClientRect();
+      const bolaRect = bola.getBoundingClientRect();
+
+      if (
+        bolaRect.bottom >= baseRect.top &&
+        bolaRect.right >= baseRect.left &&
+        bolaRect.left <= baseRect.right &&
+        bolaRect.top <= baseRect.bottom &&
+        dy > 0
+      ) {
+        // Rebate baseado na posição do impacto
+        const hitPos = (bolaRect.left + bolaRect.width/2 - baseRect.left) / baseRect.width;
+        const angle = (hitPos - 0.5) * Math.PI/2;
+        const speed = Math.sqrt(dx*dx + dy*dy);
+        
+        dx = speed * Math.sin(angle);
+        dy = -speed * Math.cos(angle);
+      }
+
+      // Colisão com blocos
+      for (let i = blocos.length - 1; i >= 0; i--) {
+        const bloco = blocos[i];
+        const blocoRect = bloco.getBoundingClientRect();
+
+        if (
+          bolaRect.bottom >= blocoRect.top &&
+          bolaRect.top <= blocoRect.bottom &&
+          bolaRect.right >= blocoRect.left &&
+          bolaRect.left <= blocoRect.right
+        ) {
+          // Determina o lado da colisão
+          const overlapX = Math.min(bolaRect.right, blocoRect.right) - Math.max(bolaRect.left, blocoRect.left);
+          const overlapY = Math.min(bolaRect.bottom, blocoRect.bottom) - Math.max(bolaRect.top, blocoRect.top);
+
+          if (overlapX > overlapY) {
+            dy = -dy;
+          } else {
+            dx = -dx;
+          }
+
+          // Efeitos ao destruir bloco
+          criarParticulas(
+            blocoRect.left + blocoRect.width/2,
+            blocoRect.top + blocoRect.height/2,
+            10
+          );
+          
+          criarPowerUp(blocoRect.left, blocoRect.top);
+          
+          bloco.remove();
+          blocos.splice(i, 1);
+          pontos += 10 * level;
+          
+          // Aumenta nível a cada 50 pontos
+          if (pontos >= level * 50) {
+            level++;
+            dx += config.aumentoVelocidade * Math.sign(dx);
+            dy += config.aumentoVelocidade * Math.sign(dy);
+          }
+          
+          atualizarPlacar();
+          break;
+        }
+      }
+
+      // Colisão com power-ups
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+        const powerUpRect = powerUp.getBoundingClientRect();
+        const baseRect = base.getBoundingClientRect();
+
+        if (
+          powerUpRect.bottom >= baseRect.top &&
+          powerUpRect.right >= baseRect.left &&
+          powerUpRect.left <= baseRect.right &&
+          powerUpRect.top <= baseRect.bottom
+        ) {
+          aplicarPowerUp(powerUp.dataset.effect);
+          powerUp.remove();
+          powerUps.splice(i, 1);
+        } else if (powerUpRect.top > window.innerHeight) {
+          powerUp.remove();
+          powerUps.splice(i, 1);
+        } else {
+          powerUp.style.top = (powerUpRect.top + 2) + 'px';
+        }
+      }
+
+      // Game over
+      if (y >= window.innerHeight - fim.offsetHeight) {
+        vidas--;
+        atualizarPlacar();
+
+        if (vidas <= 0) {
+          gameOver = true;
+          fim.textContent = 'GAME OVER';
+          cancelAnimationFrame(animationId);
+          clearInterval(blocoInterval);
+        } else {
+          // Reseta a posição
+          x = window.innerWidth / 2;
+          y = window.innerHeight / 2;
+          dx = config.velocidadeInicial + (level * config.aumentoVelocidade);
+          dy = config.velocidadeInicial + (level * config.aumentoVelocidade);
+        }
+      }
+
+      // Atualiza posição da bola
+      bola.style.left = x + 'px';
+      bola.style.top = y + 'px';
+
+      // Atualiza partículas
+      atualizarParticulas();
+
+      animationId = requestAnimationFrame(atualizarJogo);
+    }
+
+    // Controles
+    function setupControles() {
+      let baseX = base.offsetLeft;
+
+      // Mouse/touch
+      function moveBase(e) {
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (!clientX) return;
+
+        baseX = clientX - config.baseWidth / 2;
+        baseX = Math.max(0, Math.min(window.innerWidth - config.baseWidth, baseX));
+        base.style.left = baseX + 'px';
+      }
+
+      // Teclado
+      function keyDown(e) {
+        const step = 20;
+        if (e.key === 'ArrowLeft') {
+          baseX = Math.max(0, baseX - step);
+        } else if (e.key === 'ArrowRight') {
+          baseX = Math.min(window.innerWidth - config.baseWidth, baseX + step);
+        }
+        base.style.left = baseX + 'px';
+      }
+
+      window.addEventListener('mousemove', moveBase);
+      window.addEventListener('touchmove', moveBase);
+      window.addEventListener('keydown', keyDown);
+    }
+
+    // Inicia o jogo
+    function iniciarJogo() {
+      // Limpa estado anterior
+      blocos.forEach(b => b.remove());
+      particles.forEach(p => p.element.remove());
+      powerUps.forEach(p => p.remove());
+      blocos = [];
+      particles = [];
+      powerUps = [];
+
+      // Reseta valores
+      gameOver = false;
+      level = 1;
+      pontos = 0;
+      vidas = 3;
+      x = window.innerWidth / 2;
+      y = window.innerHeight / 2;
+      dx = config.velocidadeInicial;
+      dy = config.velocidadeInicial;
+
+      // Atualiza UI
+      notificacao.style.display = 'none';
+      fim.textContent = 'ZONA DE GAME OVER';
+      atualizarPlacar();
+
+      // Configura controles
+      setupControles();
+
+      // Inicia criação de blocos
+      clearInterval(blocoInterval);
+      blocoInterval = setInterval(criarBloco, 2000);
+
+      // Inicia o loop do jogo
+      if (animationId) cancelAnimationFrame(animationId);
+      atualizarJogo();
+    }
+
+    // Inicializa o jogo
+    criarEfeitoMatrix();
+    notificacao.querySelector('button').addEventListener('click', iniciarJogo);
+    notificacao.querySelector('button').addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      iniciarJogo();
+    });
+  </script>
+</body>
+</html>html>
