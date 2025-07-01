@@ -1,10 +1,11 @@
 <!DOCTYPE html>    
 <html lang="pt-BR">      
     <head>      
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">      
+  <meta name="viewport">      
   <title>Sistema Solar com Som</title>      
   <link rel="stylesheet" href="style.css">      
-  <script src="script.js" defer></script>      
+  <script src="script.js" defer></script>
+  <script src="script2.js" defer></script>     
   <!-- Seu <style> pode continuar aqui -->      
   <style>      
     * { margin: 0; padding: 0; box-sizing: border-box; }      
@@ -111,10 +112,12 @@
       border: 2px solid rgba(255,255,255,0.5);      
       border-radius: 50%;      
       transform: rotate(25deg);      
-    }      
+    }9cf;
+}
+     
     </style>      
 </head>      
-<body>    
+<body>
     <canvas id="galaxyCanvas"></canvas>  
   <div class="galaxy" id="galaxy"></div>      
 
@@ -124,7 +127,22 @@
  <div id="halley" class="cometa-halley"></div>
  
  <div class="asteroid-belt"></div>
-     
+ 
+ <div id="hud" style="
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 999;
+  max-width: 300px;
+">
+  <strong>Informações do Sistema Solar</strong><br>
+  Clique em um planeta ou evento para ver detalhes aqui.
+</div>     
   <!-- MERCÚRIO -->
   <div class="orbit" style="width: 100px; height: 100px;"></div>
   <div class="planet" style="--distance: 50px; animation-duration: 5s;" data-info="Mercúrio\nDiâmetro: 4.879 km\nTemp média: 167 °C\nDistância do Sol: 57,9 mi km">
@@ -132,12 +150,12 @@
   </div>
 <!-- VÊNUS -->
   <div class="orbit" style="width: 140px; height: 140px;"></div>
-  <div class="planet" style="--distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km\nTemp média: 464 °C\nDistância do Sol: 108 mi km">
+  <div class="planet" style="--distance: 70px; animation-duration: 7s;" data-info="Vênus\nDiâmetro: 12.104 km&#10;Temp média: 464 °C&#10;Distância do Sol: 108 mi km">
     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg" style="width: 10px; height: 10px; border-radius: 50%;">
   </div>
 <!-- TERRA + LUA -->
   <div class="orbit" style="width: 180px; height: 180px;"></div>
-    <div class="planet" style="width: 16px; height: 16px; background: transparent; --distance: 90px; animation-duration: 10s;" data-info="Terra 🌍\nDiâmetro: 12.742 km\nTemp: 15°C">
+    <div class="planet" style="width: 16px; height: 16px; background: transparent; --distance: 90px; animation-duration: 10s;" data-info="Terra 🌍\n;Diâmetro: 12.742 km\n;Temp: 15°C">
       🌍<div class="moon"></div>
     </div>
 <!-- MARTE -->
@@ -176,12 +194,18 @@
 
   <!-- NETUNO -->
   <div class="orbit" style="width: 600px; height: 600px;"></div>
-  <div class="planet" style="--distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km\nTemp média: -200 °C\nDistância do Sol: 4.495 mi km">
+  <div class="planet" style="--distance: 300px; animation-duration: 35s;" data-info="Netuno\nDiâmetro: 49.244 km&#10;Temp média: -200 °C&#10;Distância do Sol: 4.495 mi km">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg" style="width: 14px; height: 14px; border-radius: 50%;">
   </div>
 </div>
 </div>   
-  <script src="galaxias.js"></script>    <script>      const galaxy = document.getElementById('galaxy');
+  
+  <script src="galaxias.js"></script> 
+  
+
+<script>      
+    
+    const galaxy = document.getElementById('galaxy');
 for (let i = 0; i < 20; i++) {
 const star = document.createElement('div');
 star.classList.add('star');
@@ -200,19 +224,29 @@ setTimeout(() => shootingStar.remove(), 1500);
 }
 setInterval(spawnShootingStar, 8000);
 
-const bgAudio = document.getElementById('bg-audio');
-document.addEventListener("click", () => {
-if (bgAudio.paused) bgAudio.play().catch(() => {});
-});
+<script
+     <script src="galaxias.js"></script>
+<script src="script2.js"></script>
+<script src="stars.js"></script>
+<script src="meteors.js"></script>
+<script src="halley.js"></script>
+<script src="asteroidBelt.js"></script>
 
-const clickSound = document.getElementById("click-sound");
-document.querySelectorAll(".planet").forEach(p => {
-p.addEventListener("mouseenter", () => {
-clickSound.currentTime = 0;
-clickSound.play();
-});
-});
-</script>    
+<!-- Tooltip mobile support -->
+<script>
+  document.querySelectorAll('.planet').forEach(planet => {
+    planet.addEventListener('click', function (e) {
+      document.querySelectorAll('.planet').forEach(p => {
+        if (p !== this) p.classList.remove('show-tooltip');
+      });
+      this.classList.toggle('show-tooltip');
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.planet').forEach(p => p.classList.remove('show-tooltip'));
+  });
+</script>
 </body>
-
-</html>    
+</html>
