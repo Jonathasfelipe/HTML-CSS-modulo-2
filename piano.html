@@ -3,17 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Piano Tiles Colorido e Dificuldade</title>
-  <div><a href="tokflash.html">v.2</a></div>
+  <title>Piano Tiles Neon</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #f0f0f0;
-      font-family: sans-serif;
+      background: #121212;
+      font-family: 'Arial', sans-serif;
       user-select: none;
-      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+    }
+
+    #menu {
+      text-align: center;
+      background: rgba(30, 30, 30, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
+      max-width: 400px;
+      width: 90%;
+      border: 1px solid rgba(0, 200, 255, 0.2);
+    }
+
+    h1 {
+      color: #00fffc;
+      margin-bottom: 30px;
+      font-size: 28px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+    }
+
+    .menu-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 18px;
+      background: linear-gradient(45deg, #0066ff, #00ccff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+    }
+
+    .menu-button:hover {
+      background: linear-gradient(45deg, #0055dd, #00bbee);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 200, 255, 0.7);
+    }
+
+    .menu-button.secondary {
+      background: linear-gradient(45deg, #ff00cc, #ff0066);
+      box-shadow: 0 0 15px rgba(255, 0, 200, 0.5);
+    }
+
+    .menu-button.secondary:hover {
+      background: linear-gradient(45deg, #ee00bb, #ee0055);
+      box-shadow: 0 5px 20px rgba(255, 0, 200, 0.7);
+    }
+
+    .version-link {
+      margin-top: 20px;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .version-link:hover {
+      color: #00fffc;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    }
+
+    .game-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #121212;
     }
 
     #score {
@@ -21,8 +96,9 @@
       top: 10px;
       left: 10px;
       font-size: 20px;
-      color: #333;
+      color: #00fffc;
       z-index: 10;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
     }
 
     #game {
@@ -39,8 +115,8 @@
 
     .column {
       flex: 1;
-      background: #fff;
-      border: 1px solid #ccc;
+      background: rgba(40, 40, 40, 0.8);
+      border: 1px solid rgba(0, 200, 255, 0.1);
       position: relative;
       overflow: hidden;
     }
@@ -50,9 +126,10 @@
       bottom: -150px;
       width: 100%;
       height: 150px;
-      transition: background 0.2s, transform 0.2s, opacity 0.5s;
+      transition: all 0.2s;
       cursor: pointer;
       border-radius: 4px;
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
     .tile.hit {
@@ -67,39 +144,74 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 36px;
-      color: red;
+      color: #ff3366;
       display: none;
       text-align: center;
       z-index: 20;
+      background: rgba(30, 30, 30, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(255, 0, 100, 0.5);
+      border: 1px solid rgba(255, 0, 100, 0.3);
+      text-shadow: 0 0 10px rgba(255, 0, 100, 0.7);
     }
 
     #game-over button {
       margin-top: 20px;
       font-size: 20px;
       padding: 10px 20px;
-      background: red;
+      background: linear-gradient(45deg, #ff3366, #ff0066);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(255, 0, 100, 0.5);
+    }
+
+    #game-over button:hover {
+      background: linear-gradient(45deg, #ee2255, #ee0055);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 0, 100, 0.7);
+    }
+
+    .difficulty-options {
+      margin: 20px 0;
     }
   </style>
 </head>
 <body>
     
-<div id="score">Score: 0</div>
-<div id="game">
-  <div class="column" id="col-0"></div>
-  <div class="column" id="col-1"></div>
-  <div class="column" id="col-2"></div>
-  <div class="column" id="col-3"></div>
+<div id="menu">
+  <h1>Piano Tiles Neon</h1>
+  <button class="menu-button" onclick="startGame()">Iniciar Jogo</button>
+  
+  <div class="difficulty-options">
+    <button class="menu-button" onclick="startGame('easy')">Fácil</button>
+    <button class="menu-button" onclick="startGame('medium')">Médio</button>
+    <button class="menu-button" onclick="startGame('hard')">Difícil</button>
+  </div>
+  
+  <a href="tokflash.html" class="menu-button secondary">Versão Alternativa</a>
 </div>
-<div id="game-over">
-  GAME OVER<br />
-  <button onclick="restartGame()">Restart</button>
+
+<div class="game-container">
+  <div id="score">Score: 0</div>
+  <div id="game">
+    <div class="column" id="col-0"></div>
+    <div class="column" id="col-1"></div>
+    <div class="column" id="col-2"></div>
+    <div class="column" id="col-3"></div>
+  </div>
+  <div id="game-over">
+    GAME OVER<br />
+    <button onclick="restartGame()">Jogar Novamente</button>
+  </div>
 </div>
 
 <script>
+  const menu = document.getElementById('menu');
+  const gameContainer = document.querySelector('.game-container');
   const scoreDisplay = document.getElementById('score');
   const gameOverDiv = document.getElementById('game-over');
   const columns = [
@@ -109,14 +221,39 @@
     document.getElementById('col-3')
   ];
 
-  // Cores diferentes para cada coluna (faixa)
-  const tileColors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71'];
+  // Cores neon para cada coluna
+  const tileColors = [
+    'radial-gradient(circle, #ff3366, #ff0066)',
+    'radial-gradient(circle, #00fffc, #00ccff)',
+    'radial-gradient(circle, #ffcc00, #ff9900)',
+    'radial-gradient(circle, #33ff66, #00ff66)'
+  ];
 
   let score = 0;
   let gameActive = true;
-  let tileSpeed = 2.5; // velocidade inicial pixels por frame
-  let spawnInterval = 1000; // tempo entre tiles (ms)
+  let tileSpeed = 2.5;
+  let spawnInterval = 1000;
   let spawnTimeout;
+
+  function startGame(difficulty = 'medium') {
+    switch(difficulty) {
+      case 'easy':
+        tileSpeed = 2;
+        spawnInterval = 1200;
+        break;
+      case 'hard':
+        tileSpeed = 3.5;
+        spawnInterval = 700;
+        break;
+      default:
+        tileSpeed = 2.5;
+        spawnInterval = 1000;
+    }
+    
+    menu.style.display = 'none';
+    gameContainer.style.display = 'block';
+    tileLoop();
+  }
 
   function spawnTile() {
     if (!gameActive) return;
@@ -124,7 +261,7 @@
     const colIndex = Math.floor(Math.random() * 4);
     const tile = document.createElement('div');
     tile.classList.add('tile');
-    tile.style.background = tileColors[colIndex]; // aplica a cor da coluna
+    tile.style.background = tileColors[colIndex];
 
     columns[colIndex].appendChild(tile);
 
@@ -148,17 +285,15 @@
       }
     }, 16);
 
-    tile.addEventListener('touchstart', (e) => {
-      e.preventDefault();
+    tile.addEventListener('click', () => {
       if (!tile.classList.contains('hit')) {
         tile.classList.add('hit');
         score++;
         scoreDisplay.textContent = 'Score: ' + score;
 
-        // Aumenta a dificuldade a cada 10 pontos
         if (score % 10 === 0) {
-          tileSpeed += 0.7; // aumenta velocidade
-          spawnInterval = Math.max(300, spawnInterval - 100); // diminui intervalo de spawn, limite 300ms
+          tileSpeed += 0.5;
+          spawnInterval = Math.max(300, spawnInterval - 50);
         }
 
         setTimeout(() => tile.remove(), 500);
@@ -176,24 +311,27 @@
     gameActive = false;
     clearTimeout(spawnTimeout);
     gameOverDiv.style.display = 'block';
-    gameOverDiv.innerHTML = `GAME OVER<br />Score: ${score}<br /><button onclick="restartGame()">Restart</button>`;
+    gameOverDiv.innerHTML = `GAME OVER<br />Score: ${score}<br /><button onclick="restartGame()">Jogar Novamente</button>`;
   }
 
   function restartGame() {
     gameActive = true;
     score = 0;
-    tileSpeed = 2.5;
-    spawnInterval = 1000;
     scoreDisplay.textContent = 'Score: ' + score;
     gameOverDiv.style.display = 'none';
     columns.forEach(col => col.innerHTML = '');
     tileLoop();
   }
 
-  // Começa o jogo
-  tileLoop();
+  function returnToMenu() {
+    gameActive = false;
+    clearTimeout(spawnTimeout);
+    columns.forEach(col => col.innerHTML = '');
+    score = 0;
+    menu.style.display = 'block';
+    gameContainer.style.display = 'none';
+  }
 </script>
 
 </body>
-
 </html>
